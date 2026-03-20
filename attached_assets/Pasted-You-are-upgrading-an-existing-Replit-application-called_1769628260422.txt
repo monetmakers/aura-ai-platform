@@ -1,0 +1,63 @@
+You are upgrading an existing Replit application called "CX Studio" to become "Aura" - a next-generation brand intelligence platform. The current application already has:
+1. Basic document upload and processing
+2. A chatbot interface
+3. Some deployment options
+4. User authentication system
+
+## UPGRADE PRIORITIES (Most Impact First)
+
+### PHASE 1: ZERO-TRAINING DEPLOYMENT (Week 1)
+**MODIFY: document_processor.py**
+- Replace manual tagging with auto-intent discovery
+- Add pattern recognition to identify top 5 customer question categories
+- Implement "instant voice cloning" from uploaded customer conversations
+- Preserve existing document upload UI but add "Auto-Analyze" button
+
+**ADD: aura_insights_engine.py**
+- Analyzes conversation history to predict common inquiries
+- Generates initial training data automatically
+- Creates confidence scoring for auto-discovered intents
+
+### PHASE 2: EMOTIONAL INTELLIGENCE (Week 2)
+**ENHANCE: chat_engine.py**
+- Integrate sentiment analysis (TextBlob or transformer model)
+- Add dynamic tone adjustment based on customer emotion detection
+- Implement escalation prediction (flag frustrated conversations early)
+- Preserve existing response generation but add emotional layer
+
+**ADD: tone_manager.py**
+- Store brand voice profiles (empathetic/professional/enthusiastic)
+- Map emotional states to appropriate tone adjustments
+- Add "Why I said this" explanation generator for each response
+
+### PHASE 3: REVENUE INTELLIGENCE (Week 3)
+**MODIFY: conversation_handler.py**
+- Add product/service catalog integration
+- Implement upsell opportunity detection
+- Create abandoned cart rescue triggers
+- Add non-intrusive suggestion engine
+
+**ADD: revenue_insights_dashboard.jsx**
+- New dashboard tab showing:
+  - Missed upsell opportunities
+  - Successful conversions from support
+  - Customer sentiment trends
+  - ROI calculations
+
+### PHASE 4: ECOSYSTEM INTEGRATION (Week 4)
+**ENHANCE: deployment_manager.py**
+- Add one-click platform integrations:
+  - Shopify API connector
+  - Calendly scheduling
+  - Slack alerts
+  - WhatsApp Business API
+- Create "Integration Marketplace" in UI
+
+**ADD: aura_api_gateway.py**
+- Unified API for all external services
+- Error handling and fallback mechanisms
+- Usage analytics for each integration
+
+## SPECIFIC CODE MODIFICATIONS
+
+### Current Structure → Enhanced Structure

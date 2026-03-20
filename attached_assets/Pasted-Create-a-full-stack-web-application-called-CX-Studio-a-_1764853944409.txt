@@ -1,0 +1,107 @@
+Create a full-stack web application called "CX Studio" - a no-code platform where small business owners can create, train, and deploy custom AI customer service agents using their own business data, without writing any code.
+
+## CORE CONCEPT
+A web-based platform where a non-technical business owner can:
+1. Upload their business documents (FAQs, manuals, policies, past conversations)
+2. Configure their AI agent's personality and knowledge boundaries
+3. Test the agent in a conversation simulator
+4. Deploy the trained agent to their website and messaging channels with one click
+
+## PRIMARY USER STORY
+"As a small business owner without technical skills, I want to create an AI customer service agent that sounds like my best employee, knows my specific products and policies, and can handle common customer questions, so I can provide 24/7 support without hiring additional staff."
+
+## TECHNICAL REQUIREMENTS
+
+### Backend Architecture (Python/Node.js):
+- Vector database integration for document embedding and semantic search (ChromaDB/Pinecone)
+- LLM orchestration layer with configurable models (OpenAI GPT-4, Claude, or local alternatives)
+- RESTful API with endpoints for:
+  - Document processing and embedding
+  - Conversation management
+  - Agent training and fine-tuning
+  - Analytics and reporting
+- User authentication and multi-tenancy support
+
+### Frontend Requirements (React/Vue.js):
+- Drag-and-drop document upload interface
+- Visual conversation flow builder
+- Real-time agent testing playground
+- Brand voice customization panel (tone, formality, response length)
+- Analytics dashboard showing: resolution rate, conversation volume, customer satisfaction
+- One-click deployment panel for web widget, Facebook Messenger, WhatsApp, etc.
+
+### Key AI/ML Components:
+- Document chunking and embedding pipeline
+- Context-aware retrieval system with memory across conversations
+- Response generation with brand voice preservation
+- Confidence scoring for when to escalate to human agents
+- Continuous learning from human corrections
+
+### Database Schema:
+- Users (business owners)
+- Businesses (each user can have multiple)
+- Documents (uploaded training materials)
+- Conversations (all interactions with AI agents)
+- Agents (AI configurations with specific knowledge and personality)
+- Deployments (where agents are deployed - website, WhatsApp, etc.)
+
+## IMPLEMENTATION PHASES
+
+### Phase 1: MVP (Week 1-2)
+- Basic document upload and text extraction
+- Simple Q&A agent using prompt engineering
+- Web widget integration
+- Conversation history logging
+
+### Phase 2: Core Features (Week 3-4)
+- Vector database for semantic search
+- Brand voice customization
+- Multi-channel deployment (add Facebook Messenger)
+- Basic analytics dashboard
+
+### Phase 3: Advanced Features (Week 5-6)
+- Visual conversation flow builder
+- Team collaboration features
+- Advanced training with human feedback loop
+- API access for developers
+
+### Phase 4: Polish & Scale (Week 7-8)
+- Performance optimization
+- Additional platform integrations
+- Enhanced security and compliance
+- Template library for common business types
+
+## SPECIFIC FEATURES TO IMPLEMENT
+
+### 1. Document Intelligence System
+- Accept PDF, DOCX, TXT, and website URLs
+- Automatic chunking with overlap for context preservation
+- Embedding generation and vector storage
+- Smart tagging and categorization of content
+
+### 2. Agent Training Interface
+- "Fix this response" button during testing
+- Confidence threshold sliders (when to escalate to human)
+- Personality matrix (formal/casual, concise/detailed, etc.)
+- Knowledge boundary definitions (what the agent shouldn't answer)
+
+### 3. Deployment Manager
+- Customizable web widget with business branding
+- Social media platform connectors
+- Email integration for follow-ups
+- Operating hours scheduling
+
+### 4. Analytics Engine
+- Auto-categorized conversation topics
+- Customer satisfaction predictions
+- Resolution rate tracking
+- Busiest times identification
+
+## UNIQUE VALUE PROPOSITIONS TO CODE FOR:
+1. **True no-code experience** - Business owners should never see code
+2. **Conversational training** - "Talk to your AI to teach it" approach
+3. **Cross-channel memory** - Remembers conversations across platforms
+4. **Collaborative refinement** - Team members can improve AI together
+5. **Transparent pricing** - Simple monthly plans based on conversation volume
+
+## INITIAL PROJECT STRUCTURE:

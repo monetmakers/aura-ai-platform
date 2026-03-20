@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════════════
+   Aura Design Tokens
+   Golden amber dark theme primitives
+═══════════════════════════════════════════════ */
+
+:root {
+  /* Brand palette */
+  --aura-bg:          #0f0d0a;
+  --aura-surface:     #0a0805;
+  --aura-card:        #141109;
+  --aura-card-hover:  #1a1610;
+
+  --aura-amber:       #f59e0b;
+  --aura-amber-dark:  #d97706;
+  --aura-amber-dim:   #b45309;
+
+  --aura-text:        #f5e6c8;
+  --aura-text-muted:  #c8a96e;
+  --aura-text-faint:  #6b6355;
+  --aura-text-ghost:  #4a4035;
+
+  --aura-border:      rgba(245, 158, 11, 0.08);
+  --aura-border-mid:  rgba(245, 158, 11, 0.15);
+  --aura-border-hi:   rgba(245, 158, 11, 0.30);
+
+  --aura-green:   #34d399;
+  --aura-blue:    #60a5fa;
+  --aura-pink:    #f472b6;
+
+  /* Typography */
+  --font-display: 'Syne', sans-serif;
+  --font-serif:   'Literata', serif;
+  --font-ui:      'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* Radii */
+  --r-sm:  8px;
+  --r-md:  12px;
+  --r-lg:  16px;
+  --r-xl:  20px;
+
+  /* Transitions */
+  --t-fast:   0.15s ease;
+  --t-normal: 0.2s ease;
+  --t-slow:   0.3s ease;
+}

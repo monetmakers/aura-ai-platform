@@ -1,0 +1,40 @@
+{
+  "starter": {
+    "price": 19,
+    "conversations": 1000,
+    "voices": 1,
+    "features": [
+      "1,000 conversations/month",
+      "1 unique brand voice",
+      "Web & email support",
+      "5-minute setup wizard",
+      "Basic analytics dashboard"
+    ]
+  },
+  "pro": {
+    "price": 79,
+    "conversations": 5000,
+    "voices": 3,
+    "features": [
+      "5,000 conversations/month",
+      "3 unique brand voices",
+      "Revenue insights & upsell detection",
+      "WhatsApp & Facebook integration",
+      "Priority email & chat support",
+      "Advanced conversation analytics"
+    ]
+  },
+  "business": {
+    "price": 199,
+    "conversations": 20000,
+    "voices": "Unlimited",
+    "features": [
+      "20,000 conversations/month",
+      "Unlimited brand voices",
+      "White-label options",
+      "Dedicated success manager",
+      "API Access",
+      "Custom AI model training"
+    ]
+  }
+}
