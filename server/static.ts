@@ -7,7 +7,9 @@ export function serveStatic(app: Express) {
   // In ESM, __dirname is not available. Use import.meta.url.
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  const distPath = path.resolve(__dirname, "public");
+  
+  // Vite builds to dist/public at project root (two levels up from server/)
+  const distPath = path.resolve(__dirname, "..", "dist", "public");
   
   if (!fs.existsSync(distPath)) {
     throw new Error(
