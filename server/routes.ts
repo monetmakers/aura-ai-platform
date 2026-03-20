@@ -1071,5 +1071,148 @@ ${documentContext}` :
     }
   });
 
+  // ── Stripe webhook (must be raw body) ────────────────────────────────────
+  app.post("/api/stripe/webhook",
+    express.raw({ type: "application/json" }),
+    async (req, res) => {
+      try {
+        const signature = req.headers["stripe-signature"] as string;
+        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+        if (!webhookSecret) {
+          console.error("STRIPE_WEBHOOK_SECRET not set");
+          return res.status(500).json({ error: "Webhook secret not configured" });
+        }
+
+        const stripe = (await import("./stripeClient")).getStripe();
+
+        let event: Stripe.Event;
+        try {
+          event = stripe.webhooks.constructEvent(req.body, signature, webhookSecret);
+        } catch (err: any) {
+          console.error("Webhook signature verification failed:", err.message);
+          return res.status(400).json({ error: `Webhook signature verification failed: ${err.message}` });
+        }
+
+        // Log event for debugging
+        console.log(`Stripe webhook received: ${event.type}`);
+
+        // Handle relevant events
+        switch (event.type) {
+          case "checkout.session.completed": {
+            const session = event.data.object as Stripe.Checkout.Session;
+            const userId = session.metadata?.userId;
+            const customerId = session.customer as string;
+            const subscriptionId = (session.subscription as string) || undefined;
+            const planKey = session.metadata?.planKey || "pro";
+
+            if (userId && subscriptionId) {
+              await db.update(users)
+                .set({
+                  stripeCustomerId: customerId,
+                  stripeSubscriptionId: subscriptionId,
+                  plan: planKey,
+                })
+                .where(eq(users.id, userId));
+              console.log(`User ${userId} upgraded to ${planKey}, subscription ${subscriptionId}`);
+            }
+            break;
+          }
+
+          case "customer.subscription.updated": {
+            const subscription = event.data.object as Stripe.Subscription;
+            const customerId = subscription.customer as string;
+            const status = subscription.status; // active, trialing, past_due, canceled, etc.
+
+            // Find user by stripeCustomerId
+            const [user] = await db.select().from(users).where(eq(users.stripeCustomerId, customerId));
+            if (user) {
+              let plan = "free";
+              if (status === "active" || status === "trialing") {
+                // Determine plan from price ID
+                const items = subscription.items.data;
+                if (items.length > 0) {
+                  const priceId = items[0].price.id;
+                  const { listProductsWithPrices } = await import("./stripeClient");
+                  const products = await listProductsWithPrices();
+                  const product = products.data.find(p => p.prices.some(pr => pr.id === priceId));
+                  if (product) {
+                    plan = product.metadata?.plan || "pro";
+                  }
+                }
+              }
+
+              await db.update(users)
+                .set({
+                  plan,
+                  stripeSubscriptionId: subscription.id,
+                })
+                .where(eq(users.id, user.id));
+              console.log(`User ${user.id} subscription updated: ${status} → plan ${plan}`);
+            }
+            break;
+          }
+
+          case "customer.subscription.deleted": {
+            const subscription = event.data.object as Stripe.Subscription;
+            const customerId = subscription.customer as string;
+
+            const [user] = await db.select().from(users).where(eq(users.stripeCustomerId, customerId));
+            if (user) {
+              await db.update(users)
+                .set({
+                  plan: "free",
+                  stripeSubscriptionId: null,
+                })
+                .where(eq(users.id, user.id));
+              console.log(`User ${user.id} subscription canceled, downgraded to free`);
+            }
+            break;
+          }
+
+          case "invoice.payment_failed": {
+            const invoice = event.data.object as Stripe.Invoice;
+            const customerId = invoice.customer as string;
+
+            const [user] = await db.select().from(users).where(eq(users.stripeCustomerId, customerId));
+            if (user) {
+              // Could send email notification here
+              console.log(`User ${user.id} payment failed for invoice ${invoice.id}`);
+            }
+            break;
+          }
+        }
+
+        res.json({ received: true });
+      } catch (error: any) {
+        console.error("Webhook processing error:", error);
+        res.status(500).json({ error: "Webhook processing failed" });
+      }
+    });
+
+  // ── Stripe customer portal ───────────────────────────────────────────
+  app.post("/api/stripe/portal", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) return res.status(401).json({ error: "Not authenticated" });
+
+      const [user] = await db.select().from(users).where(eq(users.id, userId));
+      if (!user?.stripeCustomerId) {
+        return res.status(400).json({ error: "No billing account found" });
+      }
+
+      const { createPortalSession } = await import("./stripeClient");
+      const host = `${req.protocol}://${req.get("host")}`;
+      const { url } = await createPortalSession({
+        customerId: user.stripeCustomerId,
+        returnUrl: `${host}/dashboard`,
+      });
+
+      res.json({ url });
+    } catch (error: any) {
+      console.error("Stripe portal error:", error.message);
+      res.status(500).json({ error: error.message ?? "Failed to create portal session" });
+    }
+  });
+
   return httpServer;
 }

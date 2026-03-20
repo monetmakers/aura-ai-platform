@@ -98,3 +98,21 @@ export async function ensurePlan(name: string, amountCents: number, planKey: str
   console.log(`  created price: ${price.id} ($${amountCents / 100}/mo)`);
   return { product, price };
 }
+
+// Helper: create a Stripe Billing Portal session for customer self-service
+export async function createPortalSession({
+  customerId,
+  returnUrl,
+}: {
+  customerId: string;
+  returnUrl: string;
+}): Promise<{ url: string }> {
+  const stripe = getStripe();
+
+  const session = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: returnUrl,
+  });
+
+  return { url: session.url };
+}

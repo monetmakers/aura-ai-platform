@@ -1,6 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/i18n";
+import { apiRequest } from "@/lib/queryClient";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  businessName: string;
+  industry: string;
+  plan: string;
+  stripeCustomerId?: string;
+}
 
 export default function SettingsPage() {
   const { t } = useTranslation();
@@ -11,6 +22,27 @@ export default function SettingsPage() {
   const [emailNotif, setEmailNotif] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(true);
   const [lowConf, setLowConf] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loadingPortal, setLoadingPortal] = useState(false);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await apiRequest("GET", "/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data.user);
+          if (data.user) {
+            setBusinessName(data.user.businessName || "Main Store");
+            setEmail(data.user.email || "john@mainstore.com");
+          }
+        }
+      } catch (e) {
+        console.error("Failed to fetch user", e);
+      }
+    }
+    fetchUser();
+  }, []);
 
   function save() { setSaved(true); setTimeout(() => setSaved(false), 2500); }
 
@@ -25,6 +57,36 @@ export default function SettingsPage() {
     { label: t("settings.documentsUsage"),    val: "0 / 50",  pct: 0   },
     { label: t("settings.activeAgents"),      val: "1 / 1",   pct: 100 },
   ];
+
+  const handleManageBilling = async () => {
+    if (!user?.stripeCustomerId) {
+      alert("No billing account found. Please subscribe first.");
+      return;
+    }
+    setLoadingPortal(true);
+    try {
+      const res = await apiRequest("POST", "/api/stripe/portal");
+      if (res.ok) {
+        const { url } = await res.json();
+        window.open(url, "_blank");
+      } else {
+        const err = await res.json();
+        alert(`Failed to open billing portal: ${err.error}`);
+      }
+    } catch (e) {
+      console.error("Portal error", e);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
+
+  const planDisplay = {
+    free: t("settings.freePlan"),
+    growth: "Growth",
+    pro: "Pro",
+    business: "Business",
+  };
 
   return (
     <>
@@ -93,12 +155,23 @@ export default function SettingsPage() {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "1rem" }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: ".6rem", marginBottom: ".35rem" }}>
-                <span style={{ fontSize: "1rem", fontWeight: 800, color: "#f5e6c8" }}>{t("settings.freePlan")}</span>
-                <span style={{ fontSize: ".62rem", fontWeight: 700, background: "rgba(245,158,11,.1)", color: "#f59e0b", border: "1px solid rgba(245,158,11,.2)", padding: ".15rem .55rem", borderRadius: 100 }}>{t("settings.current")}</span>
+                <span style={{ fontSize: "1rem", fontWeight: 800, color: "#f5e6c8" }}>
+                  {planDisplay[user?.plan as keyof typeof planDisplay] || t("settings.freePlan")}
+                </span>
+                {user?.plan !== "free" && (
+                  <span style={{ fontSize: ".62rem", fontWeight: 700, background: "rgba(245,158,11,.1)", color: "#f59e0b", border: "1px solid rgba(245,158,11,.2)", padding: ".15rem .55rem", borderRadius: 100 }}>{t("settings.current")}</span>
+                )}
               </div>
               <div style={{ fontSize: ".78rem", color: "#6b6355" }}>{t("settings.agentLimit")}</div>
             </div>
-            <button className="a-btn a-btn-primary" data-testid="button-upgrade-plan">{t("settings.upgradeBtn")}</button>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button className="a-btn a-btn-primary" data-testid="button-upgrade-plan">{t("settings.upgradeBtn")}</button>
+              {user?.stripeCustomerId && (
+                <button className="a-btn" style={{ background: "rgba(245,158,11,.08)", color: "#f59e0b", border: "1px solid rgba(245,158,11,.2)", borderRadius: 10, padding: ".5rem 1rem", fontSize: ".82rem", cursor: "pointer" }} onClick={handleManageBilling} disabled={loadingPortal} data-testid="button-manage-billing">
+                  {loadingPortal ? "Loading..." : "Manage Billing"}
+                </button>
+              )}
+            </div>
           </div>
           <div style={{ marginTop: "1.2rem", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: ".7rem" }}>
             {usageItems.map((u, i) => (
