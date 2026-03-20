@@ -1,8 +1,10 @@
-import OpenAI from "openai";
 import { storage } from "./storage";
 import type { InsertDiscoveredIntent } from "@shared/schema";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Use OpenRouter free models via OpenAI-compatible API
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY;
+const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1";
+const MODEL = "openrouter/stepfun/step-3.5-flash:free"; // free, 256k context
 
 interface DiscoveredIntentData {
   intentName: string;
@@ -31,19 +33,14 @@ export class IntentDiscoveryService {
     documentContent: string,
     documentName: string
   ): Promise<DiscoveredIntentData[]> {
-    if (!process.env.OPENAI_API_KEY) {
-      console.warn("OpenAI API key not configured, using sample intents");
+    if (!OPENROUTER_API_KEY) {
+      console.warn("OpenRouter API key not configured, using sample intents");
       return this.generateSampleIntents(documentName);
     }
 
     try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "system",
-            content: `You are an AI that analyzes business documents to discover customer intents. 
-            
+      const systemPrompt = `You are an AI that analyzes business documents to discover customer intents. 
+      
 Your task is to identify what questions or requests customers might have based on the document content.
 
 For each intent you discover, provide:
@@ -54,25 +51,43 @@ For each intent you discover, provide:
 5. confidence: Your confidence level (0-100) that this is a valid customer intent
 6. category: One of: ${this.INTENT_CATEGORIES.join(", ")}
 
-Return a JSON array of intents. Discover 3-7 intents depending on document complexity.`,
-          },
-          {
-            role: "user",
-            content: `Analyze this document and discover customer intents:
+Return a JSON array of intents. Discover 3-7 intents depending on document complexity.`;
+
+      const userPrompt = `Analyze this document and discover customer intents:
 
 Document Name: ${documentName}
 
 Content:
 ${documentContent.slice(0, 8000)}
 
-Return ONLY valid JSON array, no markdown or explanation.`,
-          },
-        ],
-        temperature: 0.3,
-        max_tokens: 2000,
+Return ONLY valid JSON array, no markdown or explanation.`;
+
+      const response = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://aura-ai-platform.com",
+          "X-Title": "Aura AI Platform",
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.3,
+          max_tokens: 2000,
+        }),
       });
 
-      const content = response.choices[0]?.message?.content || "[]";
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`OpenRouter error ${response.status}: ${errText}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content || "[]";
       
       let cleanedContent = content.trim();
       if (cleanedContent.startsWith("```json")) {
@@ -96,7 +111,7 @@ Return ONLY valid JSON array, no markdown or explanation.`,
         category: this.INTENT_CATEGORIES.includes(intent.category) ? intent.category : "general",
       }));
     } catch (error) {
-      console.error("Error discovering intents with AI:", error);
+      console.error("Error discovering intents with OpenRouter:", error);
       return this.generateSampleIntents(documentName);
     }
   }
