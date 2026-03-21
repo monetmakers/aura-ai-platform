@@ -1,18 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-const SAMPLE_REPLIES = [
-  "Thanks for reaching out! I'd be happy to help with that. Could you give me a bit more detail?",
-  "Great question! Based on the information I have, I'd say the best option would be to check your account settings first.",
-  "Absolutely! Our return policy allows returns within 30 days of purchase. Just bring your receipt and the item in original condition.",
-  "I understand your frustration. Let me look into this for you — can you share your order number?",
-  "We're open Monday to Friday, 9 AM to 6 PM, and Saturday from 10 AM to 4 PM. Is there anything else I can help with?",
-];
-
 export default function PlaygroundPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [messages, setMessages] = useState([
-    { from: "bot", text: "Hey there! 👋 How can I help you today? I'm here to answer any questions about our products, policies, or services." }
+    { from: "bot", text: t("playground.welcomeMessage") }
   ]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
@@ -23,16 +15,49 @@ export default function PlaygroundPage() {
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages, typing]);
 
-  function send() {
+  async function send() {
     const text = input.trim();
     if (!text) return;
+    
+    // Add user message
     setMessages(m => [...m, { from: "user", text }]);
     setInput("");
     setTyping(true);
-    setTimeout(() => {
+    
+    try {
+      // Build conversation context for API
+      const conversationHistory = messages.slice(-10).map(msg => ({
+        role: msg.from === "user" ? "user" : "assistant",
+        content: msg.text,
+      }));
+      
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          message: text, 
+          conversationId: "playground", 
+          agentId: "default-agent",
+          language: language, // Send user's language preference
+          context: useContext ? conversationHistory : undefined,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setMessages(m => [...m, { from: "bot", text: data.message.content }]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      setMessages(m => [...m, { 
+        from: "bot", 
+        text: t("playground.errorMessage") || "Sorry, I encountered an error. Please try again." 
+      }]);
+    } finally {
       setTyping(false);
-      setMessages(m => [...m, { from: "bot", text: SAMPLE_REPLIES[Math.floor(Math.random() * SAMPLE_REPLIES.length)] }]);
-    }, 1200 + Math.random() * 800);
+    }
   }
 
   function handleKey(e: React.KeyboardEvent) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }
@@ -52,7 +77,7 @@ export default function PlaygroundPage() {
   const sessionStats = [
     { label: t("playground.messagesSent"), value: messages.filter(m => m.from === "user").length },
     { label: t("playground.botReplies"),   value: Math.max(0, messages.filter(m => m.from === "bot").length - 1) },
-    { label: t("playground.avgResponse"),  value: "~1.4s" },
+    { label: t("playground.avgResponse"),  value: "~1.4s" }, // Could be dynamic later
   ];
 
   return (
@@ -60,7 +85,7 @@ export default function PlaygroundPage() {
       <style>{css}</style>
       <div className="aura-topbar">
         <span className="aura-topbar-title">◻ {t("playground.title")}</span>
-        <button className="a-btn a-btn-ghost" onClick={() => setMessages([{ from: "bot", text: "Hey there! 👋 How can I help you today?" }])} data-testid="button-reset-conversation">
+        <button className="a-btn a-btn-ghost" onClick={() => setMessages([{ from: "bot", text: t("playground.welcomeMessage") }])} data-testid="button-reset-conversation">
           {t("playground.resetConversation")}
         </button>
       </div>
@@ -104,7 +129,7 @@ export default function PlaygroundPage() {
               rows={1}
               data-testid="input-chat-message"
             />
-            <button className="pg-send" onClick={send} disabled={!input.trim()} data-testid="button-send-message">↑</button>
+            <button className="pg-send" onClick={send} disabled={!input.trim() || typing} data-testid="button-send-message">↑</button>
           </div>
         </div>
 

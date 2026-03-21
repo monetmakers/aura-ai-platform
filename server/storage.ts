@@ -99,6 +99,7 @@ export class MemStorage implements IStorage {
     this.discoveredIntents = new Map();
 
     this.seedDefaultAgent();
+    this.seedSupportAgent();
     this.seedDefaultIntegrations();
   }
 
@@ -117,6 +118,23 @@ export class MemStorage implements IStorage {
       updatedAt: new Date(),
     };
     this.agents.set(defaultAgent.id, defaultAgent);
+  }
+
+  private seedSupportAgent() {
+    const supportAgent: Agent = {
+      id: "support-agent",
+      name: "Aura Support",
+      greeting: "Hi there! 👋 I'm Aura's AI support assistant. I can help you with getting started, integrations, billing, and troubleshooting. What do you need help with?",
+      tone: "friendly",
+      formality: 40,
+      responseLength: 70,
+      confidenceThreshold: 80,
+      boundaries: ["competitor pricing", "legal advice", "medical advice", "personal opinions"],
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.agents.set(supportAgent.id, supportAgent);
   }
 
   private seedDefaultIntegrations() {

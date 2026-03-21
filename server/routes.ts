@@ -606,7 +606,7 @@ export async function registerRoutes(
 
   app.post("/api/chat", async (req, res) => {
     try {
-      const { message, conversationId, agentId } = req.body;
+      const { message, conversationId, agentId, language = "en" } = req.body;
 
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
@@ -644,10 +644,21 @@ export async function registerRoutes(
         casual: "relaxed, conversational, and easy-going",
       };
 
+      // Language instruction
+      const languageInstructions: Record<string, string> = {
+        en: "Respond in English.",
+        lt: "Respond in Lithuanian (Lietuvių kalba). Use proper Lithuanian grammar and spelling.",
+        es: "Respond in Spanish (Español).",
+      };
+      
+      const languageInstruction = languageInstructions[language] || languageInstructions.en;
+
       const systemPrompt = `You are ${agent?.name || "a helpful assistant"}. 
 Your personality: ${toneDescriptions[agent?.tone || "friendly"]}
 Formality level: ${agent?.formality || 50}% (0 = very casual, 100 = very formal)
 Response length preference: ${agent?.responseLength || 50}% (0 = very concise, 100 = very detailed)
+
+CRITICAL: ${languageInstruction} All your responses must be in the specified language.
 
 ${emotionalGuidance}
 
@@ -656,7 +667,7 @@ ${agent?.boundaries && agent.boundaries.length > 0 ?
   ""
 }
 
-${documentContext ? 
+${documentContent ? 
   `Use the following knowledge base to answer questions. If the answer is not in the knowledge base, say you don't have that information and offer to connect them with a human agent.
 
 KNOWLEDGE BASE:

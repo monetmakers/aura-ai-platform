@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import i18n from "@/lib/i18n";
 import { useUser } from "@/hooks/useUser";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LANG_OPTIONS = [
   { code: "en", label: "EN", full: "English" },
@@ -300,6 +301,13 @@ export default function AppSidebarInner() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Theme toggle */}
+        <div className="sb-theme-row" style={{ padding: "0.3rem 0.5rem 0" }}>
+          <div className="sb-lang-btn" style={{ justifyContent: "center" }}>
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* User profile */}

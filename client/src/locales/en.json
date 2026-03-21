@@ -249,7 +249,9 @@
     "sentiment": "Sentiment",
     "positive": "Positive",
     "negative": "Negative",
-    "neutral": "Neutral"
+    "neutral": "Neutral",
+    "welcomeMessage": "Hey there! 👋 How can I help you today? I'm here to answer any questions about our products, policies, or services.",
+    "errorMessage": "Sorry, I encountered an error. Please try again."
   },
   "insights": {
     "title": "AI Insights",
@@ -533,12 +535,15 @@
     "noResults": "No results for",
     "contactSupport": "Contact Support",
     "subject": "Subject",
+    "subject": "Subject",
     "subjectPlaceholder": "What can we help with?",
     "message": "Message",
     "messagePlaceholder": "Describe your issue in detail…",
     "sendMessage": "Send message",
     "messageSent": "✓ Message sent! We'll get back to you within 24 hours.",
-    "community": "Community & Updates",
+    "supportWelcome": "Hi there! 👋 I'm Aura's AI support assistant. I can help you with getting started, integrations, billing, and troubleshooting. What do you need help with?",
+    "supportPlaceholder": "Ask about Aura features, setup, pricing..."
+  },    "community": "Community & Updates",
     "discord": "Discord community",
     "discordSub": "Connect with other Aura users",
     "roadmap": "Product roadmap",

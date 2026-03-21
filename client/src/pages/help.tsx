@@ -1,11 +1,52 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function HelpPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [search, setSearch] = useState("");
   const [msgSent, setMsgSent] = useState(false);
+  const [supportChatOpen, setSupportChatOpen] = useState(false);
+  const [supportMessages, setSupportMessages] = useState<Array<{from: "user" | "bot", text: string}>>([
+    { from: "bot", text: t("help.supportWelcome") || "Hi there! 👋 I'm Aura's AI support assistant. I can help you with getting started, integrations, billing, and troubleshooting. What do you need help with?" }
+  ]);
+  const [supportInput, setSupportInput] = useState("");
+  const [supportTyping, setSupportTyping] = useState(false);
+  const supportBottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { supportBottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [supportMessages, supportTyping]);
+
+  async function sendSupportMessage() {
+    const text = supportInput.trim();
+    if (!text) return;
+    
+    setSupportMessages(m => [...m, { from: "user", text }]);
+    setSupportInput("");
+    setSupportTyping(true);
+    
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          message: text, 
+          conversationId: "support-chat", 
+          agentId: "support-agent", // Dedicated support agent
+          language: language,
+        }),
+      });
+      
+      if (!response.ok) throw new Error("Failed to get support response");
+      
+      const data = await response.json();
+      setSupportMessages(m => [...m, { from: "bot", text: data.message.content }]);
+    } catch (error) {
+      console.error("Support chat error:", error);
+      setSupportMessages(m => [...m, { from: "bot", text: "Sorry, I'm having trouble connecting right now. Please try again or contact us via email." }]);
+    } finally {
+      setSupportTyping(false);
+    }
+  }
 
   const FAQS = [
     { q: t("help.faq1Q"), a: t("help.faq1A") },
@@ -78,12 +119,80 @@ export default function HelpPage() {
           <div className="a-card">
             <div className="card-hd"><span style={{ color: "#60a5fa" }}>◇</span><span className="card-hd-title">{t("help.contactSupport")}</span></div>
             <div style={{ display: "flex", flexDirection: "column", gap: ".8rem" }}>
-              <div><label className="a-label">{t("help.subject")}</label><input className="a-input" placeholder={t("help.subjectPlaceholder")} data-testid="input-support-subject" /></div>
-              <div><label className="a-label">{t("help.message")}</label><textarea className="a-textarea" placeholder={t("help.messagePlaceholder")} style={{ minHeight: 90 }} data-testid="textarea-support-message" /></div>
-              {msgSent ? (
-                <div style={{ fontSize: ".78rem", color: "#34d399", fontWeight: 700 }}>{t("help.messageSent")}</div>
+              {!supportChatOpen ? (
+                <>
+                  <div style={{ fontSize: ".82rem", color: "#c8a96e", lineHeight: 1.6 }}>
+                    Need immediate help? Chat with our AI support assistant who can answer questions about Aura, guide you through setup, and help with any issues.
+                  </div>
+                  <button 
+                    className="a-btn a-btn-primary" 
+                    style={{ alignSelf: "flex-start" }} 
+                    onClick={() => { setSupportChatOpen(true); }}
+                    data-testid="button-open-support-chat"
+                  >
+                    💬 Start Support Chat
+                  </button>
+                </>
               ) : (
-                <button className="a-btn a-btn-primary" style={{ alignSelf: "flex-start" }} onClick={() => setMsgSent(true)} data-testid="button-send-support">{t("help.sendMessage")}</button>
+                <>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+                    <span style={{ fontSize: ".78rem", fontWeight: 700, color: "#34d399" }}>🟢 Aura Support Assistant</span>
+                    <button 
+                      onClick={() => { setSupportChatOpen(false); setSupportMessages([{ from: "bot", text: t("help.supportWelcome") || "Hello! I'm Aura's support assistant. How can I help you today?" }]); }}
+                      style={{ background: "none", border: "none", color: "#6b6355", cursor: "pointer", fontSize: ".75rem" }}
+                      data-testid="button-close-support-chat"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <div className="support-chat-messages" style={{ maxHeight: "300px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "0.75rem", padding: "0.5rem 0" }}>
+                    {supportMessages.map((msg, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: msg.from === "user" ? "flex-end" : "flex-start" }}>
+                        <div style={{
+                          maxWidth: "85%",
+                          padding: "0.65rem 1rem",
+                          borderRadius: msg.from === "user" ? "12px 12px 2px 12px" : "2px 12px 12px 12px",
+                          background: msg.from === "user" ? "rgba(245,158,11,.2)" : "#141109",
+                          border: msg.from === "user" ? "1px solid rgba(245,158,11,.3)" : "1px solid rgba(245,158,11,.1)",
+                          color: msg.from === "user" ? "#f5e6c8" : "#c8a96e",
+                          fontSize: ".8rem",
+                          lineHeight: 1.55,
+                        }}>{msg.text}</div>
+                      </div>
+                    ))}
+                    {supportTyping && (
+                      <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                        <div style={{ padding: "0.65rem 1rem", borderRadius: "2px 12px 12px 12px", background: "#141109", border: "1px solid rgba(245,158,11,.1)", display: "flex", gap: "4px" }}>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#f59e0b", animation: "a-pulse 1.2s infinite" }}></span>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#f59e0b", animation: "a-pulse 1.2s infinite", animationDelay: "0.2s" }}></span>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#f59e0b", animation: "a-pulse 1.2s infinite", animationDelay: "0.4s" }}></span>
+                        </div>
+                      </div>
+                    )}
+                    <div ref={supportBottomRef} />
+                  </div>
+                  <div className="support-chat-input" style={{ display: "flex", gap: "0.5rem" }}>
+                    <textarea
+                      className="a-input"
+                      placeholder={t("help.supportPlaceholder") || "Ask about Aura..."}
+                      value={supportInput}
+                      onChange={e => setSupportInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendSupportMessage(); } }}
+                      rows={2}
+                      style={{ resize: "none", lineHeight: "1.5" }}
+                      data-testid="input-support-chat"
+                    />
+                    <button 
+                      className="a-btn a-btn-primary" 
+                      onClick={sendSupportMessage} 
+                      disabled={!supportInput.trim() || supportTyping}
+                      style={{ alignSelf: "flex-end" }}
+                      data-testid="button-send-support-chat"
+                    >
+                      Send
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
