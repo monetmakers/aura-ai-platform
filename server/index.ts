@@ -75,6 +75,19 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Seed Stripe plans on startup (idempotent - only creates if missing)
+  if (process.env.NODE_ENV === "production" && process.env.STRIPE_SECRET_KEY) {
+    try {
+      const { ensurePlan } = await import("./stripeClient");
+      log("Seeding Stripe plans...", "stripe");
+      await ensurePlan("Aura Growth Plan", 2900, "growth");
+      await ensurePlan("Aura Pro Plan", 7900, "pro");
+      log("Stripe plans seeded successfully", "stripe");
+    } catch (err: any) {
+      log(`Warning: Failed to seed Stripe plans: ${err.message}`, "stripe");
+    }
+  }
+
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
