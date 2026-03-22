@@ -1,0 +1,1 @@
+{"preDeployCommand":"npm run db:push && npx tsx scripts/seed-stripe-plans.ts"}
