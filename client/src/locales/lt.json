@@ -563,7 +563,9 @@
     "messageSent": "✓ Žinutė išsiųsta! Atsakysime per 24 val.",
     "supportWelcome": "Sveiki! 👋 Aš esiu Aura AI pagalbos asistentas. Galiu padėti jums pradėti, su integracijomis, sąskaitų ir problemų sprendimu. Su kuo galėčiau padėti?",
     "supportPlaceholder": "Klauskite apie Aura funkcijas, sąranką, kainas..."
-  },    "community": "Bendruomenė ir atnaujinimai",
+  },
+  "community": {
+    "title": "Bendruomenė ir atnaujinimai",
     "discord": "Discord bendruomenė",
     "discordSub": "Susisiekite su kitais Aura naudotojais",
     "roadmap": "Produkto planas",
