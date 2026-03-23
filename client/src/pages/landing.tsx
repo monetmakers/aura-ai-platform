@@ -414,5 +414,3 @@ export default function LandingV2() {
     </div>
   );
 }
-
-export default LandingV2;
