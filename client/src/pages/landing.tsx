@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { ChevronRight, Check, Zap, BarChart3, MessageSquare, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function LandingV2() {
   const [, navigate] = useLocation();
@@ -21,6 +22,11 @@ export default function LandingV2() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors">
+      {/* Theme Toggle - Top Right */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* HERO SECTION */}
       <section className="relative overflow-hidden">
         {/* Animated background gradient */}
