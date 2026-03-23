@@ -44,9 +44,9 @@ function AppRouter() {
 
 function AppWithSidebar() {
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: "#0f0d0a" }}>
+    <div className="bg-background" style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <AppSidebar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0, background: "#0f0d0a" }}>
+      <div className="bg-background" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
         <AppRouter />
       </div>
     </div>
