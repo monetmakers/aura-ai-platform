@@ -1058,6 +1058,9 @@ ${documentContext}` :
 
   app.post("/api/stripe/checkout", async (req, res) => {
     try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) return res.status(401).json({ error: "Not authenticated" });
+
       const { createCheckoutSession } = await import("./stripeClient");
       const { priceId, customerEmail, planKey } = req.body as {
         priceId: string;
@@ -1072,7 +1075,7 @@ ${documentContext}` :
         customerEmail,
         successUrl: `${host}/dashboard?upgraded=${planKey ?? "paid"}&session_id={CHECKOUT_SESSION_ID}`,
         cancelUrl:  `${host}/dashboard`,
-        metadata:   { planKey: planKey ?? "" },
+        metadata:   { userId, planKey: planKey ?? "pro" },
       });
 
       res.json({ url });
