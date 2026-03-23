@@ -544,7 +544,8 @@
     "supportWelcome": "Hi there! 👋 I'm Aura's AI support assistant. I can help you with getting started, integrations, billing, and troubleshooting. What do you need help with?",
     "supportPlaceholder": "Ask about Aura features, setup, pricing..."
   },
-  "community": "Community & Updates",
+  "community": {
+    "title": "Community & Updates",
     "discord": "Discord community",
     "discordSub": "Connect with other Aura users",
     "roadmap": "Product roadmap",
