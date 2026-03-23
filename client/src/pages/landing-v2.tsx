@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { useTranslation } from "react-i18next";
 import { ChevronRight, Check, Zap, BarChart3, MessageSquare, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LandingV2() {
   const [, navigate] = useLocation();
-  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
