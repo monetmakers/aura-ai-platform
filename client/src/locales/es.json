@@ -563,7 +563,9 @@
     "messageSent": "✓ ¡Mensaje enviado! Te responderemos en 24 horas.",
     "supportWelcome": "¡Hola! 👋 Soy el asistente de soporte de IA de Aura. Puedo ayudarte con empezar, integraciones, facturación y solución de problemas. ¿Qué necesitas?",
     "supportPlaceholder": "Pregunta sobre funciones de Aura, configuración, precios..."
-  },    "community": "Comunidad y actualizaciones",
+  },
+  "community": {
+    "title": "Comunidad y actualizaciones",
     "discord": "Comunidad de Discord",
     "discordSub": "Conecta con otros usuarios de Aura",
     "roadmap": "Hoja de ruta del producto",
