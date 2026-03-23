@@ -667,11 +667,8 @@ ${agent?.boundaries && agent.boundaries.length > 0 ?
   ""
 }
 
-${documentContent ? 
-  `Use the following knowledge base to answer questions. If the answer is not in the knowledge base, say you don't have that information and offer to connect them with a human agent.
-
-KNOWLEDGE BASE:
-${documentContext}` : 
+${documentContext ? 
+  `Use the following knowledge base to answer questions. If the answer is not in the knowledge base, say you don't have that information and offer to connect them with a human agent.\n\nKNOWLEDGE BASE:\n${documentContext}` : 
   "You don't have any knowledge base documents yet. Let the user know they can upload documents to train you on their business information."
 }`;
 
