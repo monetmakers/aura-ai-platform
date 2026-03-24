@@ -9,6 +9,7 @@ export default function LandingV2() {
   const [, navigate] = useLocation();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  // Force rebuild cache clear
 
   const handleWaitlist = (e: React.FormEvent) => {
     e.preventDefault();
