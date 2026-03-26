@@ -411,7 +411,22 @@ export default function LandingPage() {
         <nav className={`nav ${scrolled ? "scrolled" : ""}`}>
           <div className="nav-inner">
             <div className="nav-logo">
-              <div className="logo-mark">✨</div>
+              <div className="logo-mark">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: "#10b981", stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: "#3b82f6", stopOpacity: 1}} />
+                    </linearGradient>
+                  </defs>
+                  <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#logo-grad)"/>
+                  <circle cx="12" cy="14" r="2" fill="white"/>
+                  <circle cx="20" cy="14" r="2" fill="white"/>
+                  <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  <circle cx="16" cy="7" r="1" fill="white"/>
+                  <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </div>
               <span>Aura</span>
             </div>
             <div className="nav-links">
@@ -433,7 +448,21 @@ export default function LandingPage() {
             <div className="hero-inner">
               <div className="hero-left">
                 <div className="hero-badge">
-                  <span>✨</span> {t("landing.hero.badge")}
+                  <svg width="18" height="18" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink: 0}}>
+                    <defs>
+                      <linearGradient id="badge-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: "#10b981", stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: "#3b82f6", stopOpacity: 1}} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#badge-grad)"/>
+                    <circle cx="12" cy="14" r="2" fill="white"/>
+                    <circle cx="20" cy="14" r="2" fill="white"/>
+                    <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <circle cx="16" cy="7" r="1" fill="white"/>
+                    <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  {t("landing.hero.badge")}
                 </div>
                 <h1 className="hero-title">
                   {t("landing.hero.title")}<br />
@@ -635,7 +664,21 @@ export default function LandingPage() {
           <section className="cta">
             <div className="cta-bg" />
             <div className="section-inner" style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-              <div className="section-label" style={{ justifyContent: "center" }}>
+              <div className="section-label" style={{ justifyContent: "center", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="cta-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: "#10b981", stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: "#3b82f6", stopOpacity: 1}} />
+                    </linearGradient>
+                  </defs>
+                  <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#cta-grad)"/>
+                  <circle cx="12" cy="14" r="2" fill="white"/>
+                  <circle cx="20" cy="14" r="2" fill="white"/>
+                  <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  <circle cx="16" cy="7" r="1" fill="white"/>
+                  <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
                 {t("landing.footerCta.eyebrow")}
               </div>
               <h2 className="section-title" style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)" }}>
@@ -654,7 +697,22 @@ export default function LandingPage() {
           {/* Footer */}
           <footer className="footer">
             <div className="nav-logo" style={{ marginBottom: "0.5rem" }}>
-              <div className="logo-mark">✨</div>
+              <div className="logo-mark">
+                <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="logo-grad-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: "#10b981", stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: "#3b82f6", stopOpacity: 1}} />
+                    </linearGradient>
+                  </defs>
+                  <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#logo-grad-footer)"/>
+                  <circle cx="12" cy="14" r="2" fill="white"/>
+                  <circle cx="20" cy="14" r="2" fill="white"/>
+                  <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  <circle cx="16" cy="7" r="1" fill="white"/>
+                  <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </div>
               <span>Aura</span>
             </div>
             <div style={{ fontSize: "0.875rem", color: "#6b7280" }}>
@@ -735,14 +793,14 @@ const styles = `
   .logo-mark {
     width: 32px;
     height: 32px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #10b981, #059669);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
-    color: #ffffff;
-    font-weight: 900;
+  }
+  
+  .logo-mark svg {
+    width: 32px;
+    height: 32px;
   }
 
   .nav-links {
