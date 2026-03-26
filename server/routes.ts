@@ -692,7 +692,7 @@ ${documentContext ?
         let baseResponse: string;
         let modelUsed = model; // Track which model was actually used
         
-        // Try GLM-5 first (now default), then fall back to Gemini
+        // Try GLM-5 first (now default), then fall back to other OpenRouter models, then cloud model
         try {
           // Use GLM-5 via OpenRouter (primary model)
           const completion = await openrouter.chat.completions.create({
@@ -711,17 +711,38 @@ ${documentContext ?
           
           modelUsed = "glm5";
         } catch (glm5Error) {
-          console.warn("GLM-5 failed, falling back to Gemini:", glm5Error.message);
+          console.warn("GLM-5 failed, trying fallback OpenRouter models:", glm5Error.message);
           
-          // Fallback to Gemini
-          const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-          const fullPrompt = `${systemPrompt}\n\nUser message: ${message}`;
-          
-          const result = await geminiModel.generateContent(fullPrompt);
-          const response = result.response;
-          baseResponse = response.text() || "I apologize, but I couldn't generate a response.";
-          
-          modelUsed = "gemini";
+          // Try alternative OpenRouter models as fallback
+          try {
+            const fallbackCompletion = await openrouter.chat.completions.create({
+              model: "openai/gpt-4o-mini",  // Fallback to GPT-4o mini via OpenRouter
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: message }
+              ],
+              temperature: 0.7,
+            });
+            baseResponse = fallbackCompletion.choices[0]?.message?.content || "";
+            
+            if (!baseResponse || baseResponse.trim() === "") {
+              throw new Error("Empty response from fallback model");
+            }
+            
+            modelUsed = "openai/gpt-4o-mini";
+          } catch (fallbackError) {
+            console.warn("OpenRouter fallback failed, trying cloud model:", fallbackError.message);
+            
+            // Final fallback to cloud model (Gemini)
+            const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+            const fullPrompt = `${systemPrompt}\n\nUser message: ${message}`;
+            
+            const result = await geminiModel.generateContent(fullPrompt);
+            const response = result.response;
+            baseResponse = response.text() || "I apologize, but I couldn't generate a response.";
+            
+            modelUsed = "gemini";
+          }
         }
         
         const emotionalResult = EmotionalIntelligence.adjustResponseTone(
