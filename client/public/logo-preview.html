@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Logo Options</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 3rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+      color: #9ca3af;
+      margin-bottom: 4rem;
+      text-align: center;
+    }
+
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 3rem;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .logo-option {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 20px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .logo-option:hover {
+      transform: translateY(-4px);
+      border-color: #10b981;
+      box-shadow: 0 20px 50px rgba(16, 185, 129, 0.15);
+    }
+
+    .logo-preview-box {
+      width: 200px;
+      height: 200px;
+      background: #1f2937;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .logo-preview-box img {
+      width: 120px;
+      height: 120px;
+      filter: drop-shadow(0 10px 30px rgba(16, 185, 129, 0.3));
+    }
+
+    .logo-details {
+      text-align: center;
+      width: 100%;
+    }
+
+    .logo-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f3f4f6;
+      margin-bottom: 0.75rem;
+    }
+
+    .logo-description {
+      font-size: 0.9375rem;
+      color: #9ca3af;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo-features {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: #d1d5db;
+    }
+
+    .feature::before {
+      content: "✓";
+      color: #10b981;
+      font-weight: 700;
+    }
+
+    .navbar-preview {
+      margin-top: 4rem;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .preview-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .navbar-examples {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .nav-example {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #f3f4f6;
+    }
+
+    .nav-logo img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .copy-btn {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <h1>Aura Logo Options</h1>
+  <p class="subtitle">Choose the perfect minimalistic logo for your AI customer support platform</p>
+
+  <div class="logo-grid">
+    <!-- Option 1: Chat Bubble with AI Spark -->
+    <div class="logo-option" data-logo="1">
+      <div class="logo-preview-box">
+        <img src="/logo-option-1.svg" alt="Logo Option 1">
+      </div>
+      <div class="logo-details">
+        <h3 class="logo-title">Option 1: AI Chat Bubble</h3>
+        <p class="logo-description">
+          A modern chat bubble with an AI spark/star in the center. Represents conversation and intelligence.
+        </p>
+        <div class="logo-features">
+          <div class="feature">Direct association with messaging</div>
+          <div class="feature">AI spark symbolizes intelligence</div>
+          <div class="feature">Clean gradient design</div>
+          <div class="feature">Instantly recognizable purpose</div>
+        </div>
+        <button class="copy-btn" onclick="selectLogo(1)">Select This Logo</button>
+      </div>
+    </div>
+
+    <!-- Option 2: Circular Aura/Glow -->
+    <div class="logo-option" data-logo="2">
+      <div class="logo-preview-box">
+        <img src="/logo-option-2.svg" alt="Logo Option 2">
+      </div>
+      <div class="logo-details">
+        <h3 class="logo-title">Option 2: Aura Rings</h3>
+        <p class="logo-description">
+          Concentric rings creating an "aura" effect around the letter "A". Represents energy and presence.
+        </p>
+        <div class="logo-features">
+          <div class="feature">Literally shows an "aura"</div>
+          <div class="feature">Letter "A" for brand identity</div>
+          <div class="feature">Radiating energy metaphor</div>
+          <div class="feature">Elegant and sophisticated</div>
+        </div>
+        <button class="copy-btn" onclick="selectLogo(2)">Select This Logo</button>
+      </div>
+    </div>
+
+    <!-- Option 3: Hexagonal Robot -->
+    <div class="logo-option" data-logo="3">
+      <div class="logo-preview-box">
+        <img src="/logo-option-3.svg" alt="Logo Option 3">
+      </div>
+      <div class="logo-details">
+        <h3 class="logo-title">Option 3: AI Assistant Bot</h3>
+        <p class="logo-description">
+          A friendly robot/AI assistant in a hexagonal tech frame. Represents automation and helpfulness.
+        </p>
+        <div class="logo-features">
+          <div class="feature">Friendly, approachable AI face</div>
+          <div class="feature">Tech-forward hexagon shape</div>
+          <div class="feature">Signal antenna shows connectivity</div>
+          <div class="feature">Playful yet professional</div>
+        </div>
+        <button class="copy-btn" onclick="selectLogo(3)">Select This Logo</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="navbar-preview">
+    <div class="preview-label">How it looks in the navigation bar:</div>
+    <div class="navbar-examples">
+      <div class="nav-example">
+        <div class="nav-logo">
+          <img src="/logo-option-1.svg" alt="Option 1">
+          <span>Aura</span>
+        </div>
+        <span style="margin-left: auto; color: #6b7280; font-size: 0.875rem;">Option 1: AI Chat Bubble</span>
+      </div>
+      <div class="nav-example">
+        <div class="nav-logo">
+          <img src="/logo-option-2.svg" alt="Option 2">
+          <span>Aura</span>
+        </div>
+        <span style="margin-left: auto; color: #6b7280; font-size: 0.875rem;">Option 2: Aura Rings</span>
+      </div>
+      <div class="nav-example">
+        <div class="nav-logo">
+          <img src="/logo-option-3.svg" alt="Option 3">
+          <span>Aura</span>
+        </div>
+        <span style="margin-left: auto; color: #6b7280; font-size: 0.875rem;">Option 3: AI Assistant Bot</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function selectLogo(option) {
+      alert(`Great choice! You selected Option ${option}.\n\nI'll update the landing page with logo-option-${option}.svg`);
+      console.log(`Selected logo option: ${option}`);
+    }
+  </script>
+</body>
+</html>

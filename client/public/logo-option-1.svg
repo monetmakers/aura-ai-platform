@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Option 1: Chat Bubble with AI Spark -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Chat bubble -->
+  <path d="M4 8C4 5.79086 5.79086 4 8 4H24C26.2091 4 28 5.79086 28 8V18C28 20.2091 26.2091 22 24 22H12L6 28V22V8Z" fill="url(#grad1)"/>
+  
+  <!-- AI spark/star in center -->
+  <path d="M16 10L17 13H20L17.5 15L18.5 18L16 16L13.5 18L14.5 15L12 13H15L16 10Z" fill="white"/>
+</svg>
