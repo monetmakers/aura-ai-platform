@@ -184,7 +184,20 @@ export default function AppSidebarInner() {
       <aside className="sidebar">
         {/* Logo */}
         <div className="sb-logo" onClick={() => navigate("/")}>
-          <div className="sb-logo-mark">✦</div>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink: 0}}>
+            <defs>
+              <linearGradient id="sb-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{stopColor: "#10b981", stopOpacity: 1}} />
+                <stop offset="100%" style={{stopColor: "#3b82f6", stopOpacity: 1}} />
+              </linearGradient>
+            </defs>
+            <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#sb-logo-grad)"/>
+            <circle cx="12" cy="14" r="2" fill="white"/>
+            <circle cx="20" cy="14" r="2" fill="white"/>
+            <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+            <circle cx="16" cy="7" r="1" fill="white"/>
+            <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
           <span className="sb-logo-text">Aura</span>
         </div>
 
@@ -350,170 +363,171 @@ const css = `
   /* ── Modal ── */
   .sb-modal-overlay {
     position: fixed; inset: 0; z-index: 1000;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.8);
     display: flex; align-items: center; justify-content: center;
     animation: sbFade 0.2s ease both;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
   }
   .sb-modal {
-    background: #141109; border: 1px solid rgba(245,158,11,0.2);
-    border-radius: 20px; padding: 2rem 2.2rem;
-    max-width: 380px; width: calc(100% - 2rem);
+    background: #1f2937; border: 1px solid #374151;
+    border-radius: 24px; padding: 2.5rem 2.5rem;
+    max-width: 420px; width: calc(100% - 2rem);
     position: relative;
-    animation: sbSlideUp 0.25s ease both;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,158,11,0.08);
-    font-family: 'Syne', sans-serif;
+    animation: sbSlideUp 0.3s ease both;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.8);
+    font-family: 'Inter', sans-serif;
   }
   .sb-modal-close {
-    position: absolute; top: 1rem; right: 1rem;
-    background: none; border: none; color: #6b6355;
-    font-size: 0.9rem; cursor: pointer; padding: 0.2rem 0.4rem;
-    border-radius: 4px; transition: color 0.15s;
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    background: none; border: none; color: #9ca3af;
+    font-size: 1.125rem; cursor: pointer; padding: 0.25rem 0.5rem;
+    border-radius: 6px; transition: all 0.2s;
   }
-  .sb-modal-close:hover { color: #c8a96e; }
+  .sb-modal-close:hover { color: #f3f4f6; background: #374151; }
   .sb-modal-badge {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: linear-gradient(135deg,#f59e0b22,#d9770622);
-    border: 1px solid rgba(245,158,11,0.25);
+    width: 56px; height: 56px; border-radius: 14px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem; margin-bottom: 1rem;
+    font-size: 1.75rem; margin-bottom: 1.25rem;
   }
-  .sb-modal-title { font-size: 1.25rem; font-weight: 700; color: #f5e6c8; margin: 0 0 0.2rem; }
-  .sb-modal-price { font-size: 2rem; font-weight: 800; color: #f59e0b; margin: 0 0 0.5rem; }
-  .sb-modal-interval { font-size: 0.85rem; font-weight: 400; color: #6b6355; }
-  .sb-modal-desc { font-size: 0.78rem; color: #6b6355; margin: 0 0 1.2rem; }
-  .sb-modal-features { list-style: none; margin: 0 0 1.4rem; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
-  .sb-modal-features li { font-size: 0.8rem; color: #c8a96e; }
+  .sb-modal-title { font-size: 1.5rem; font-weight: 800; color: #f3f4f6; margin: 0 0 0.5rem; }
+  .sb-modal-price { font-size: 2.5rem; font-weight: 800; color: #10b981; margin: 0 0 0.5rem; }
+  .sb-modal-interval { font-size: 1rem; font-weight: 400; color: #9ca3af; }
+  .sb-modal-desc { font-size: 0.9375rem; color: #9ca3af; margin: 0 0 1.5rem; line-height: 1.6; }
+  .sb-modal-features { list-style: none; margin: 0 0 1.75rem; padding: 0; display: flex; flex-direction: column; gap: 0.625rem; }
+  .sb-modal-features li { font-size: 0.9375rem; color: #d1d5db; }
   .sb-modal-btn {
-    width: 100%; padding: 0.8rem;
-    background: linear-gradient(135deg,#f59e0b,#d97706);
+    width: 100%; padding: 1rem;
+    background: linear-gradient(135deg,#10b981,#059669);
     border: none; border-radius: 12px;
-    font-family: 'Syne',sans-serif; font-size: 0.88rem; font-weight: 800;
-    color: #0a0805; cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 6px 24px rgba(245,158,11,0.3);
+    font-family: 'Inter',sans-serif; font-size: 1rem; font-weight: 700;
+    color: #ffffff; cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
   }
-  .sb-modal-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(245,158,11,0.4); }
+  .sb-modal-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4); }
   .sb-modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-  .sb-modal-note { text-align: center; font-size: 0.68rem; color: #4a4035; margin: 0.6rem 0 0; }
+  .sb-modal-note { text-align: center; font-size: 0.8125rem; color: #6b7280; margin: 0.75rem 0 0; }
   @keyframes sbFade    { from{opacity:0} to{opacity:1} }
   @keyframes sbSlideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
 
   .sidebar {
-    width: 224px; flex-shrink: 0;
-    background: #0a0805;
-    border-right: 1px solid rgba(245,158,11,0.1);
+    width: 240px; flex-shrink: 0;
+    background: #111827;
+    border-right: 1px solid #1f2937;
     display: flex; flex-direction: column;
     padding: 0 0 0.5rem; overflow-y: auto;
     position: relative; height: 100vh;
+    font-family: 'Inter', sans-serif;
   }
-  .sidebar::-webkit-scrollbar { width: 0; }
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-track { background: #111827; }
+  .sidebar::-webkit-scrollbar-thumb { background: #374151; border-radius: 3px; }
 
   .sb-logo {
-    display: flex; align-items: center; gap: 0.6rem;
-    padding: 1.3rem 1.2rem 1rem; cursor: pointer;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 1.5rem 1.25rem 1.25rem; cursor: pointer;
+    transition: opacity 0.2s;
   }
-  .sb-logo-mark {
-    width: 28px; height: 28px; border-radius: 7px;
-    background: linear-gradient(135deg,#f59e0b,#d97706);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; color: #0a0805; font-weight: 900; flex-shrink: 0;
-  }
-  .sb-logo-text { font-size: 1.1rem; font-weight: 800; color: #f5e6c8; letter-spacing: -0.02em; }
+  .sb-logo:hover { opacity: 0.8; }
+  .sb-logo-text { font-size: 1.25rem; font-weight: 800; color: #f3f4f6; letter-spacing: -0.025em; }
 
-  .sb-biz-wrap { margin: 0 0.7rem 1rem; position: relative; }
+  .sb-biz-wrap { margin: 0 1rem 1.25rem; position: relative; }
   .sb-biz {
     width: 100%;
-    padding: 0.55rem 0.75rem;
-    background: rgba(245,158,11,0.06);
-    border: 1px solid rgba(245,158,11,0.12);
-    border-radius: 10px;
-    display: flex; align-items: center; gap: 0.6rem;
-    cursor: pointer; transition: background 0.15s;
-    font-family: 'Syne', sans-serif;
+    padding: 0.75rem 1rem;
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    display: flex; align-items: center; gap: 0.75rem;
+    cursor: pointer; transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
   }
-  .sb-biz:hover { background: rgba(245,158,11,0.1); }
+  .sb-biz:hover { background: #374151; border-color: #4b5563; }
   .sb-biz-av {
-    width: 26px; height: 26px; border-radius: 6px;
-    background: linear-gradient(135deg,#34d399,#059669);
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg,#10b981,#059669);
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.7rem; font-weight: 800; color: #022c22; flex-shrink: 0;
+    font-size: 0.875rem; font-weight: 800; color: #ffffff; flex-shrink: 0;
   }
-  .sb-biz-name { font-size: 0.75rem; font-weight: 700; color: #f5e6c8; text-align: left; }
-  .sb-biz-plan { font-size: 0.62rem; color: #6b6355; text-align: left; }
-  .sb-biz-chevron { margin-left: auto; color: #6b6355; font-size: 0.75rem; flex-shrink: 0; }
+  .sb-biz-name { font-size: 0.875rem; font-weight: 700; color: #f3f4f6; text-align: left; }
+  .sb-biz-plan { font-size: 0.75rem; color: #9ca3af; text-align: left; }
+  .sb-biz-chevron { margin-left: auto; color: #9ca3af; font-size: 0.875rem; flex-shrink: 0; transition: transform 0.2s; }
 
   .sb-biz-menu {
     position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 200;
-    background: #141109; border: 1px solid rgba(245,158,11,0.15);
-    border-radius: 12px; overflow: hidden;
+    background: #1f2937; border: 1px solid #374151;
+    border-radius: 14px; overflow: hidden;
     animation: a-fadeUp 0.15s ease both;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
   }
   .sb-biz-menu-lbl {
-    padding: 0.55rem 0.85rem 0.3rem;
-    font-size: 0.57rem; font-weight: 700; letter-spacing: 0.1em;
-    color: #4a4035; text-transform: uppercase;
+    padding: 0.75rem 1rem 0.5rem;
+    font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.08em;
+    color: #6b7280; text-transform: uppercase;
   }
   .sb-plan-item {
-    display: flex; align-items: center; gap: 0.5rem;
-    width: 100%; padding: 0.55rem 0.85rem;
+    display: flex; align-items: center; gap: 0.625rem;
+    width: 100%; padding: 0.75rem 1rem;
     background: none; border: none;
-    font-family: 'Syne',sans-serif; cursor: pointer;
-    text-align: left; transition: background 0.15s;
+    font-family: 'Inter',sans-serif; cursor: pointer;
+    text-align: left; transition: background 0.2s;
   }
-  .sb-plan-item:hover { background: rgba(245,158,11,0.06); }
-  .sb-plan-item.active { background: rgba(245,158,11,0.08); }
-  .sb-plan-name { font-size: 0.78rem; font-weight: 700; color: #c8a96e; display: flex; align-items: center; gap: 0.4rem; }
-  .sb-plan-price { font-size: 0.62rem; font-weight: 500; color: #f59e0b; }
-  .sb-plan-desc { font-size: 0.62rem; color: #4a4035; margin-top: 0.1rem; }
-  .sb-plan-check { margin-left: auto; color: #f59e0b; font-size: 0.75rem; flex-shrink: 0; }
+  .sb-plan-item:hover { background: rgba(16, 185, 129, 0.05); }
+  .sb-plan-item.active { background: rgba(16, 185, 129, 0.1); }
+  .sb-plan-name { font-size: 0.9375rem; font-weight: 700; color: #f3f4f6; display: flex; align-items: center; gap: 0.5rem; }
+  .sb-plan-price { font-size: 0.75rem; font-weight: 600; color: #10b981; }
+  .sb-plan-desc { font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem; }
+  .sb-plan-check { margin-left: auto; color: #10b981; font-size: 1rem; flex-shrink: 0; }
   .sb-plan-badge {
-    margin-left: auto; font-size: 0.55rem; font-weight: 800;
-    padding: 0.1rem 0.4rem; border-radius: 100px; flex-shrink: 0;
-    background: rgba(245,158,11,0.15); color: #f59e0b;
-    border: 1px solid rgba(245,158,11,0.25);
-    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-left: auto; font-size: 0.6875rem; font-weight: 800;
+    padding: 0.25rem 0.5rem; border-radius: 100px; flex-shrink: 0;
+    background: rgba(16, 185, 129, 0.1); color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    text-transform: uppercase; letter-spacing: 0.04em;
   }
-  .sb-biz-divider { height: 1px; background: rgba(245,158,11,0.08); margin: 0.3rem 0; }
+  .sb-biz-divider { height: 1px; background: #374151; margin: 0.5rem 0; }
   .sb-plan-add {
-    display: flex; align-items: center; gap: 0.55rem;
-    width: 100%; padding: 0.6rem 0.85rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    width: 100%; padding: 0.75rem 1rem;
     background: none; border: none;
-    font-family: 'Syne',sans-serif; font-size: 0.77rem; font-weight: 700;
-    color: #f59e0b; cursor: pointer; text-align: left;
-    transition: background 0.15s;
+    font-family: 'Inter',sans-serif; font-size: 0.9375rem; font-weight: 700;
+    color: #10b981; cursor: pointer; text-align: left;
+    transition: background 0.2s;
   }
-  .sb-plan-add:hover { background: rgba(245,158,11,0.06); }
+  .sb-plan-add:hover { background: rgba(16, 185, 129, 0.05); }
   .sb-plan-add-icon {
-    width: 18px; height: 18px; border-radius: 4px;
-    background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.25);
+    width: 20px; height: 20px; border-radius: 6px;
+    background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
     display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; color: #f59e0b; flex-shrink: 0;
+    font-size: 1rem; color: #10b981; flex-shrink: 0;
   }
 
   .sb-sec-lbl {
-    padding: 0 1.2rem 0.35rem;
-    font-size: 0.58rem; letter-spacing: 0.1em;
-    color: #4a4035; font-weight: 700; font-family: 'Syne',sans-serif;
+    padding: 0 1.25rem 0.5rem;
+    font-size: 0.6875rem; letter-spacing: 0.08em;
+    color: #6b7280; font-weight: 700; font-family: 'Inter',sans-serif;
+    text-transform: uppercase;
   }
-  .sb-nav { display: flex; flex-direction: column; gap: 1px; padding: 0 0.5rem; }
+  .sb-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 0.75rem; }
   .sb-item {
-    display: flex; align-items: center; gap: 0.65rem;
-    padding: 0.5rem 0.75rem; border-radius: 8px;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; border-radius: 10px;
     border: none; background: none;
-    color: #6b6355; font-family: 'Syne',sans-serif;
-    font-size: 0.8rem; font-weight: 600;
-    cursor: pointer; transition: all 0.15s;
+    color: #9ca3af; font-family: 'Inter',sans-serif;
+    font-size: 0.9375rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
     text-align: left; width: 100%; position: relative;
   }
-  .sb-item:hover { background: rgba(245,158,11,0.06); color: #c8a96e; }
-  .sb-item.active { background: rgba(245,158,11,0.1); color: #f5c842; }
-  .sb-icon { font-size: 0.88rem; width: 17px; text-align: center; flex-shrink: 0; }
+  .sb-item:hover { background: #1f2937; color: #d1d5db; }
+  .sb-item.active { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+  .sb-icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
   .sb-label { flex: 1; }
   .sb-pip {
-    position: absolute; right: 0.6rem;
-    width: 5px; height: 5px; border-radius: 50%;
-    background: #f59e0b;
+    position: absolute; right: 0.75rem;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
   }
 
   .sb-lang-row { padding: 0.3rem 0.5rem 0; position: relative; }
