@@ -6,19 +6,11 @@ import {
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts";
 
-/* ─── Google Fonts ─── */
-const FontLink = () => (
-  <link
-    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Literata:ital,wght@0,400;0,500;1,400&display=swap"
-    rel="stylesheet"
-  />
-);
-
 export default function DashboardPage() {
   const [, navigate] = useLocation();
   const { t } = useTranslation();
 
-  /* ─── Chart data (translated labels) ─── */
+  /* Chart data (translated labels) */
   const volumeData = [
     { day: t("dashboard.dayMon"), v: 0 },
     { day: t("dashboard.dayTue"), v: 0 },
@@ -37,16 +29,17 @@ export default function DashboardPage() {
     { topic: t("dashboard.topicOther"),    count: 0 },
   ];
 
-  /* ─── Custom tooltip ─── */
+  /* Custom tooltip */
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload?.length) {
       return (
         <div style={{
-          background: "#0f0d0a", border: "1px solid rgba(245,158,11,0.2)",
-          borderRadius: 8, padding: "6px 12px",
-          fontFamily: "Syne, sans-serif", fontSize: 12, color: "#f5e6c8",
+          background: "#1f2937", border: "1px solid #374151",
+          borderRadius: 10, padding: "0.5rem 0.875rem",
+          fontFamily: "Inter, sans-serif", fontSize: "0.8125rem", color: "#f3f4f6",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
         }}>
-          <div style={{ color: "#f59e0b", fontWeight: 700 }}>{label}</div>
+          <div style={{ color: "#10b981", fontWeight: 700, marginBottom: "0.25rem" }}>{label}</div>
           <div>{payload[0].value} {t("dashboard.tooltipConversations")}</div>
         </div>
       );
@@ -69,19 +62,32 @@ export default function DashboardPage() {
 
   return (
     <>
-      <FontLink />
       <style>{css}</style>
 
-      <div className="aura-page">
+      <div className="aura-dashboard">
 
         {/* Page header */}
-        <div className="page-header">
+        <div className="dash-header">
           <div>
-            <h1 className="page-title">{t("dashboard.title")}</h1>
-            <p className="page-sub">{t("dashboard.subtitle")}</p>
+            <h1 className="dash-title">{t("dashboard.title")}</h1>
+            <p className="dash-subtitle">{t("dashboard.subtitle")}</p>
           </div>
-          <button className="cta-btn" onClick={() => navigate("/playground")}>
-            <span>✦</span> {t("dashboard.testingEnv")}
+          <button className="btn-primary" onClick={() => navigate("/playground")}>
+            <svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink: 0}}>
+              <defs>
+                <linearGradient id="btn-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{stopColor: "#ffffff", stopOpacity: 0.9}} />
+                  <stop offset="100%" style={{stopColor: "#ffffff", stopOpacity: 0.7}} />
+                </linearGradient>
+              </defs>
+              <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#btn-grad)"/>
+              <circle cx="12" cy="14" r="2" fill="#10b981"/>
+              <circle cx="20" cy="14" r="2" fill="#10b981"/>
+              <path d="M11 19Q16 22 21 19" stroke="#10b981" strokeWidth="2" strokeLinecap="round" fill="none"/>
+              <circle cx="16" cy="7" r="1" fill="#10b981"/>
+              <line x1="16" y1="8" x2="16" y2="11" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            {t("dashboard.testingEnv")}
           </button>
         </div>
 
@@ -92,36 +98,36 @@ export default function DashboardPage() {
               label: t("dashboard.statConversations"),
               value: String(stats?.totalConversations ?? 0),
               sub: t("dashboard.statSubAllTime"),
-              icon: "◇",
-              accent: "#f59e0b",
+              icon: "💬",
+              accent: "#10b981",
             },
             {
               label: t("dashboard.statMessages"),
               value: String(stats?.totalMessages ?? 0),
               sub: t("dashboard.statSubAllTime"),
-              icon: "◎",
-              accent: "#34d399",
+              icon: "📨",
+              accent: "#3b82f6",
             },
             {
               label: t("dashboard.statDocuments"),
               value: `${readyDocs}/${stats?.totalDocuments ?? 0}`,
               sub: t("dashboard.statSubReadyTraining"),
-              icon: "⊟",
-              accent: "#60a5fa",
+              icon: "📚",
+              accent: "#ec4899",
             },
             {
               label: t("dashboard.statSatisfaction"),
               value: stats?.avgSatisfaction ? `${stats.avgSatisfaction}%` : "N/A",
               sub: t("dashboard.statSubRating"),
-              icon: "◈",
-              accent: "#f472b6",
+              icon: "⭐",
+              accent: "#f59e0b",
             },
           ].map((s, i) => (
             <div className="stat-card" key={i} style={{ animationDelay: `${i * 0.08}s` }}>
               <div className="stat-top">
                 <span className="stat-label">{s.label}</span>
-                <div className="stat-icon-wrap" style={{ color: s.accent, background: `${s.accent}18` }}>
-                  {s.icon}
+                <div className="stat-icon" style={{ background: `${s.accent}15` }}>
+                  <span style={{ fontSize: "1.25rem" }}>{s.icon}</span>
                 </div>
               </div>
               <div className="stat-value" style={{ color: s.accent }}>{s.value}</div>
@@ -137,24 +143,41 @@ export default function DashboardPage() {
           <div className="chart-card">
             <div className="card-header">
               <div className="card-title-group">
-                <span className="card-icon" style={{ color: "#f59e0b" }}>↗</span>
+                <span className="card-icon">📈</span>
                 <span className="card-title">{t("dashboard.chartVolume")}</span>
               </div>
               <span className="badge">{t("dashboard.badgeLast7")}</span>
             </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <AreaChart data={volumeData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={volumeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="vGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#f59e0b" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                  <linearGradient id="volumeGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%"  stopColor="#10b981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                <XAxis dataKey="day" tick={{ fill: "#6b6355", fontSize: 11, fontFamily: "Syne" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: "#6b6355", fontSize: 11, fontFamily: "Syne" }} axisLine={false} tickLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis 
+                  dataKey="day" 
+                  tick={{ fill: "#9ca3af", fontSize: 12, fontFamily: "Inter" }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                />
+                <YAxis 
+                  tick={{ fill: "#9ca3af", fontSize: 12, fontFamily: "Inter" }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                />
                 <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="v" stroke="#f59e0b" strokeWidth={2} fill="url(#vGrad)" dot={false} />
+                <Area 
+                  type="monotone" 
+                  dataKey="v" 
+                  stroke="#10b981" 
+                  strokeWidth={3} 
+                  fill="url(#volumeGrad)" 
+                  dot={{ fill: "#10b981", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#10b981" }}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -163,17 +186,34 @@ export default function DashboardPage() {
           <div className="chart-card">
             <div className="card-header">
               <div className="card-title-group">
-                <span className="card-icon" style={{ color: "#60a5fa" }}>◇</span>
+                <span className="card-icon">🏷️</span>
                 <span className="card-title">{t("dashboard.chartTopics")}</span>
               </div>
               <span className="badge">{t("dashboard.badgeThisMonth")}</span>
             </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={topicsData} layout="vertical" margin={{ top: 4, right: 8, left: 8, bottom: 0 }}>
-                <XAxis type="number" tick={{ fill: "#6b6355", fontSize: 10, fontFamily: "Syne" }} axisLine={false} tickLine={false} />
-                <YAxis type="category" dataKey="topic" tick={{ fill: "#a89880", fontSize: 11, fontFamily: "Syne" }} axisLine={false} tickLine={false} width={56} />
-                <Tooltip cursor={{ fill: "rgba(245,158,11,0.05)" }} content={<CustomTooltip />} />
-                <Bar dataKey="count" fill="#60a5fa" radius={[0, 4, 4, 0]} barSize={10} />
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={topicsData} layout="vertical" margin={{ top: 5, right: 10, left: 10, bottom: 0 }}>
+                <XAxis 
+                  type="number" 
+                  tick={{ fill: "#9ca3af", fontSize: 11, fontFamily: "Inter" }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                />
+                <YAxis 
+                  type="category" 
+                  dataKey="topic" 
+                  tick={{ fill: "#d1d5db", fontSize: 12, fontFamily: "Inter" }} 
+                  axisLine={false} 
+                  tickLine={false} 
+                  width={70} 
+                />
+                <Tooltip cursor={{ fill: "rgba(16, 185, 129, 0.05)" }} content={<CustomTooltip />} />
+                <Bar 
+                  dataKey="count" 
+                  fill="#3b82f6" 
+                  radius={[0, 6, 6, 0]} 
+                  barSize={14} 
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -186,20 +226,22 @@ export default function DashboardPage() {
           <div className="chart-card">
             <div className="card-header">
               <div className="card-title-group">
-                <span className="card-icon" style={{ color: "#f59e0b" }}>⚡</span>
+                <span className="card-icon">⚡</span>
                 <span className="card-title">{t("dashboard.quickActionsTitle")}</span>
               </div>
             </div>
             <div className="quick-actions">
               {[
-                { icon: "⊟", label: t("dashboard.qaUploadLabel"),    sub: t("dashboard.qaUploadSub"),    color: "#f59e0b", path: "/documents" },
-                { icon: "◈", label: t("dashboard.qaConfigureLabel"),  sub: t("dashboard.qaConfigureSub"), color: "#34d399", path: "/agent" },
-                { icon: "◻", label: t("dashboard.qaPlaygroundLabel"), sub: t("dashboard.qaPlaygroundSub"),color: "#60a5fa", path: "/playground" },
-                { icon: "⊕", label: t("dashboard.qaConnectLabel"),    sub: t("dashboard.qaConnectSub"),   color: "#f472b6", path: "/deploy" },
+                { icon: "📚", label: t("dashboard.qaUploadLabel"),    sub: t("dashboard.qaUploadSub"),    color: "#10b981", path: "/documents" },
+                { icon: "⚙️", label: t("dashboard.qaConfigureLabel"),  sub: t("dashboard.qaConfigureSub"), color: "#3b82f6", path: "/agent" },
+                { icon: "🧪", label: t("dashboard.qaPlaygroundLabel"), sub: t("dashboard.qaPlaygroundSub"),color: "#ec4899", path: "/playground" },
+                { icon: "🚀", label: t("dashboard.qaConnectLabel"),    sub: t("dashboard.qaConnectSub"),   color: "#f59e0b", path: "/deploy" },
               ].map((a, i) => (
-                <button className="quick-action-item" key={i} onClick={() => navigate(a.path)}>
-                  <div className="qa-icon" style={{ color: a.color, background: `${a.color}18` }}>{a.icon}</div>
-                  <div className="qa-text">
+                <button className="quick-action-btn" key={i} onClick={() => navigate(a.path)}>
+                  <div className="qa-icon" style={{ background: `${a.color}15`, color: a.color }}>
+                    <span style={{ fontSize: "1.25rem" }}>{a.icon}</span>
+                  </div>
+                  <div className="qa-content">
                     <div className="qa-label">{a.label}</div>
                     <div className="qa-sub">{a.sub}</div>
                   </div>
@@ -213,29 +255,44 @@ export default function DashboardPage() {
           <div className="chart-card">
             <div className="card-header">
               <div className="card-title-group">
-                <span className="card-icon" style={{ color: "#34d399" }}>◈</span>
+                <span className="card-icon">🤖</span>
                 <span className="card-title">{t("dashboard.agentStatusTitle")}</span>
               </div>
             </div>
-            <div className="agent-status-body">
+            <div className="agent-status">
               <div className="agent-orb">
                 <div className="orb-ring" />
-                <div className="orb-core">✦</div>
+                <div className="orb-core">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id="orb-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: "#10b981", stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: "#3b82f6", stopOpacity: 1}} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#orb-grad)"/>
+                    <circle cx="12" cy="14" r="2" fill="white"/>
+                    <circle cx="20" cy="14" r="2" fill="white"/>
+                    <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <circle cx="16" cy="7" r="1" fill="white"/>
+                    <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </div>
               </div>
               <div className="agent-status-label">
                 {stats?.totalConversations ? t("dashboard.agentActive") : t("dashboard.agentNotConfigured")}
               </div>
-              <div className="agent-status-sub">
+              <div className="agent-status-desc">
                 {stats?.totalConversations
                   ? t("dashboard.agentActiveDesc", { count: stats.totalConversations })
                   : t("dashboard.agentNotConfiguredDesc")}
               </div>
-              <button className="cta-btn-sm" onClick={() => navigate("/agent")}>
+              <button className="btn-secondary" onClick={() => navigate("/agent")}>
                 {stats?.totalConversations ? t("dashboard.manageAgent") : t("dashboard.createAgent")}
               </button>
             </div>
 
-            <div className="status-checklist">
+            <div className="checklist">
               {[
                 { done: (stats?.totalDocuments ?? 0) > 0,     label: t("dashboard.checklistUpload") },
                 { done: false,                                  label: t("dashboard.checklistConfigure") },
@@ -243,7 +300,9 @@ export default function DashboardPage() {
                 { done: false,                                  label: t("dashboard.checklistDeploy") },
               ].map((item, i) => (
                 <div className="check-item" key={i}>
-                  <div className={`check-dot ${item.done ? "done" : ""}`}>{item.done ? "✓" : ""}</div>
+                  <div className={`check-box ${item.done ? "done" : ""}`}>
+                    {item.done && <span>✓</span>}
+                  </div>
                   <span className={`check-label ${item.done ? "done" : ""}`}>{item.label}</span>
                 </div>
               ))}
@@ -256,163 +315,393 @@ export default function DashboardPage() {
   );
 }
 
-/* ═══════════════════════════════════════
-   STYLES
-═══════════════════════════════════════ */
+/* Styles */
 const css = `
-  .aura-page {
+  .aura-dashboard {
     display: flex;
     flex-direction: column;
-    gap: 1.4rem;
-    font-family: 'Syne', sans-serif;
+    gap: 1.5rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
-  .page-header {
-    display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  /* Header */
+  .dash-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
   }
-  .page-title {
-    font-family: 'Literata', serif;
-    font-size: 1.7rem; font-weight: 500;
-    color: #f5e6c8; letter-spacing: -0.01em; line-height: 1.2;
-  }
-  .page-sub { font-size: 0.82rem; color: #6b6355; margin-top: 0.3rem; }
 
-  .cta-btn {
-    display: flex; align-items: center; gap: 0.5rem;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #0a0805; border: none; border-radius: 10px;
-    padding: 0.65rem 1.3rem; font-size: 0.82rem; font-weight: 800;
-    font-family: 'Syne', sans-serif; cursor: pointer;
-    transition: all 0.2s; white-space: nowrap;
-    box-shadow: 0 4px 20px rgba(245,158,11,0.25);
+  .dash-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f3f4f6;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    margin: 0 0 0.375rem;
   }
-  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,158,11,0.35); }
 
-  /* ── STATS ── */
+  .dash-subtitle {
+    font-size: 1rem;
+    color: #9ca3af;
+    margin: 0;
+  }
+
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+  }
+
+  /* Stats Grid */
   .stats-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
   }
-  @media (max-width: 1100px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  @media (max-width: 1200px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
   .stat-card {
-    background: #141109;
-    border: 1px solid rgba(245,158,11,0.08);
-    border-radius: 14px; padding: 1.2rem 1.3rem;
-    transition: all 0.2s; cursor: default;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    cursor: default;
     animation: fadeUp 0.5s ease both;
   }
-  .stat-card:hover {
-    border-color: rgba(245,158,11,0.18);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  }
-  .stat-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; }
-  .stat-label { font-size: 0.72rem; color: #6b6355; font-weight: 600; letter-spacing: 0.02em; }
-  .stat-icon-wrap {
-    width: 30px; height: 30px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem;
-  }
-  .stat-value { font-size: 1.9rem; font-weight: 800; line-height: 1; margin-bottom: 0.3rem; }
-  .stat-sub { font-size: 0.68rem; color: #4a4035; }
 
-  /* ── CHARTS ── */
-  .charts-row {
-    display: grid; grid-template-columns: 1.6fr 1fr; gap: 1rem;
+  .stat-card:hover {
+    border-color: #374151;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
   }
-  @media (max-width: 1000px) { .charts-row { grid-template-columns: 1fr; } }
+
+  .stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stat-value {
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-sub {
+    font-size: 0.8125rem;
+    color: #6b7280;
+  }
+
+  /* Charts */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 1024px) {
+    .charts-row {
+      grid-template-columns: 1fr;
+    }
+  }
 
   .chart-card {
-    background: #141109;
-    border: 1px solid rgba(245,158,11,0.08);
-    border-radius: 14px; padding: 1.3rem 1.4rem;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
   }
+
   .card-header {
-    display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
   }
-  .card-title-group { display: flex; align-items: center; gap: 0.5rem; }
-  .card-icon { font-size: 0.9rem; }
-  .card-title { font-size: 0.88rem; font-weight: 700; color: #c8a96e; }
+
+  .card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .card-icon {
+    font-size: 1.125rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f3f4f6;
+  }
+
   .badge {
-    font-size: 0.62rem; font-weight: 600; letter-spacing: 0.04em;
-    padding: 0.2rem 0.6rem; border-radius: 100px;
-    background: rgba(245,158,11,0.08); color: #6b6355;
-    border: 1px solid rgba(245,158,11,0.1);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
   }
 
-  /* ── BOTTOM ROW ── */
+  /* Bottom Row */
   .bottom-row {
-    display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 1.25rem;
   }
-  @media (max-width: 1000px) { .bottom-row { grid-template-columns: 1fr; } }
 
-  .quick-actions { display: flex; flex-direction: column; gap: 0.5rem; }
-  .quick-action-item {
-    display: flex; align-items: center; gap: 0.8rem;
-    padding: 0.7rem 0.8rem; border-radius: 10px;
-    background: rgba(245,158,11,0.03); border: 1px solid rgba(245,158,11,0.06);
-    cursor: pointer; transition: all 0.15s; text-align: left; width: 100%;
-    font-family: 'Syne', sans-serif;
+  @media (max-width: 1024px) {
+    .bottom-row {
+      grid-template-columns: 1fr;
+    }
   }
-  .quick-action-item:hover {
-    background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.15);
+
+  .quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.125rem;
+    border-radius: 12px;
+    background: #1f2937;
+    border: 1px solid #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .quick-action-btn:hover {
+    background: #374151;
+    border-color: #4b5563;
+    transform: translateX(4px);
+  }
+
+  .qa-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .qa-content {
+    flex: 1;
+  }
+
+  .qa-label {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin-bottom: 0.25rem;
+  }
+
+  .qa-sub {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+  }
+
+  .qa-arrow {
+    color: #6b7280;
+    font-size: 1.125rem;
+    transition: all 0.2s;
+  }
+
+  .quick-action-btn:hover .qa-arrow {
+    color: #10b981;
     transform: translateX(3px);
   }
-  .qa-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem; flex-shrink: 0;
-  }
-  .qa-label { font-size: 0.8rem; font-weight: 700; color: #c8a96e; }
-  .qa-sub { font-size: 0.68rem; color: #4a4035; margin-top: 0.1rem; }
-  .qa-arrow { margin-left: auto; color: #4a4035; font-size: 0.85rem; transition: color 0.15s; }
-  .quick-action-item:hover .qa-arrow { color: #f59e0b; }
 
-  .agent-status-body {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 1rem 0 1.2rem; text-align: center; gap: 0.5rem;
+  /* Agent Status */
+  .agent-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 0 1.75rem;
+    text-align: center;
+    gap: 0.75rem;
   }
-  .agent-orb { position: relative; width: 56px; height: 56px; margin-bottom: 0.3rem; }
+
+  .agent-orb {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 0.5rem;
+  }
+
   .orb-ring {
-    position: absolute; inset: 0; border-radius: 50%;
-    border: 1.5px dashed rgba(245,158,11,0.3);
-    animation: spin 10s linear infinite;
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px dashed rgba(16, 185, 129, 0.3);
+    animation: spin 12s linear infinite;
   }
+
   .orb-core {
-    position: absolute; inset: 8px; border-radius: 50%;
-    background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
-    display: flex; align-items: center; justify-content: center;
-    color: #f59e0b; font-size: 1rem;
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid rgba(16, 185, 129, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
   }
-  .agent-status-label { font-size: 0.88rem; font-weight: 700; color: #c8a96e; }
-  .agent-status-sub { font-size: 0.72rem; color: #4a4035; line-height: 1.5; max-width: 220px; }
-  .cta-btn-sm {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #0a0805; border: none; border-radius: 8px;
-    padding: 0.45rem 1rem; font-size: 0.75rem; font-weight: 800;
-    font-family: 'Syne', sans-serif; cursor: pointer;
-    margin-top: 0.3rem; transition: all 0.2s;
-  }
-  .cta-btn-sm:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(245,158,11,0.3); }
 
-  .status-checklist {
-    display: flex; flex-direction: column; gap: 0.5rem;
-    padding-top: 1rem; border-top: 1px solid rgba(245,158,11,0.08);
+  .agent-status-label {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #f3f4f6;
   }
-  .check-item { display: flex; align-items: center; gap: 0.7rem; }
-  .check-dot {
-    width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
-    border: 1.5px solid rgba(245,158,11,0.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.55rem; color: transparent;
-  }
-  .check-dot.done { background: #34d399; border-color: #34d399; color: #022c22; }
-  .check-label { font-size: 0.75rem; color: #4a4035; }
-  .check-label.done { color: #34d399; text-decoration: line-through; }
 
+  .agent-status-desc {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    line-height: 1.6;
+    max-width: 260px;
+  }
+
+  .btn-secondary {
+    background: #1f2937;
+    color: #10b981;
+    border: 1px solid #10b981;
+    border-radius: 10px;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(16, 185, 129, 0.1);
+    transform: translateY(-1px);
+  }
+
+  /* Checklist */
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #1f2937;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  .check-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    border: 2px solid #374151;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: transparent;
+    transition: all 0.2s;
+  }
+
+  .check-box.done {
+    background: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+  }
+
+  .check-label {
+    font-size: 0.875rem;
+    color: #9ca3af;
+    transition: all 0.2s;
+  }
+
+  .check-label.done {
+    color: #10b981;
+    text-decoration: line-through;
+  }
+
+  /* Animations */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 `;
