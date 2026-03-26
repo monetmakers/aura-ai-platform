@@ -19,13 +19,11 @@ export default function PlaygroundPage() {
     const text = input.trim();
     if (!text) return;
     
-    // Add user message
     setMessages(m => [...m, { from: "user", text }]);
     setInput("");
     setTyping(true);
     
     try {
-      // Build conversation context for API
       const conversationHistory = messages.slice(-10).map(msg => ({
         role: msg.from === "user" ? "user" : "assistant",
         content: msg.text,
@@ -38,14 +36,12 @@ export default function PlaygroundPage() {
           message: text, 
           conversationId: "playground", 
           agentId: "default-agent",
-          language: language, // Send user's language preference
+          language: language,
           context: useContext ? conversationHistory : undefined,
         }),
       });
       
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
       
       const data = await response.json();
       setMessages(m => [...m, { from: "bot", text: data.message.content }]);
@@ -63,123 +59,138 @@ export default function PlaygroundPage() {
   function handleKey(e: React.KeyboardEvent) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }
 
   const toggleSettings = [
-    { label: t("playground.useDocContext"), sub: t("playground.useDocContextSub"), val: useContext, set: setUseContext, testId: "toggle-use-doc-context" },
-    { label: t("playground.strictMode"),    sub: t("playground.strictModeSub"),    val: strictMode, set: setStrictMode, testId: "toggle-strict-mode" },
-  ];
-
-  const agentInfo = [
-    { label: t("playground.agentName"), value: "Aria",         color: "#f5e6c8" },
-    { label: t("playground.tone"),      value: "Friendly",     color: "#f59e0b" },
-    { label: t("playground.documents"), value: `0 ${t("playground.loaded")}`,  color: "#60a5fa" },
-    { label: t("playground.status"),    value: t("common.active"), color: "#34d399" },
-  ];
-
-  const sessionStats = [
-    { label: t("playground.messagesSent"), value: messages.filter(m => m.from === "user").length },
-    { label: t("playground.botReplies"),   value: Math.max(0, messages.filter(m => m.from === "bot").length - 1) },
-    { label: t("playground.avgResponse"),  value: "~1.4s" }, // Could be dynamic later
+    { label: t("playground.useDocContext"), sub: t("playground.useDocContextSub"), val: useContext, set: setUseContext },
+    { label: t("playground.strictMode"),    sub: t("playground.strictModeSub"),    val: strictMode, set: setStrictMode },
   ];
 
   return (
     <>
       <style>{css}</style>
-      <div className="aura-topbar">
-        <span className="aura-topbar-title">◻ {t("playground.title")}</span>
-        <button className="a-btn a-btn-ghost" onClick={() => setMessages([{ from: "bot", text: t("playground.welcomeMessage") }])} data-testid="button-reset-conversation">
-          {t("playground.resetConversation")}
-        </button>
-      </div>
-
-      <div className="pg-layout">
-        <div className="pg-chat-panel">
-          <div className="pg-chat-header">
-            <div className="pg-agent-av">✦</div>
-            <div>
-              <div className="pg-agent-name">Aria <span className="pg-agent-badge">{t("playground.testMode")}</span></div>
-              <div className="pg-agent-sub">Main Store · AI Customer Agent</div>
-            </div>
-            <div className="pg-online"><div className="pg-online-dot" />{t("playground.live")}</div>
+      <div className="playground-page">
+        
+        <div className="page-header">
+          <div>
+            <h1 className="page-title">🧪 {t("playground.title")}</h1>
+            <p className="page-subtitle">{t("playground.subtitle")}</p>
           </div>
-
-          <div className="pg-messages">
-            {messages.map((msg, i) => (
-              <div key={i} className={`pg-msg-wrap ${msg.from}`}>
-                {msg.from === "bot" && <div className="pg-bot-av">✦</div>}
-                <div className={`pg-bubble ${msg.from}`} data-testid={`message-${i}`}>{msg.text}</div>
-              </div>
-            ))}
-            {typing && (
-              <div className="pg-msg-wrap bot">
-                <div className="pg-bot-av">✦</div>
-                <div className="pg-bubble bot pg-typing">
-                  <span /><span /><span />
-                </div>
-              </div>
-            )}
-            <div ref={bottomRef} />
-          </div>
-
-          <div className="pg-input-row">
-            <textarea
-              className="pg-input"
-              placeholder={t("playground.chatPlaceholder")}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={handleKey}
-              rows={1}
-              data-testid="input-chat-message"
-            />
-            <button className="pg-send" onClick={send} disabled={!input.trim() || typing} data-testid="button-send-message">↑</button>
-          </div>
+          <button className="btn-clear" onClick={() => setMessages([{ from: "bot", text: t("playground.welcomeMessage") }])}>
+            Clear Chat
+          </button>
         </div>
 
-        <div className="pg-settings-panel">
-          <div className="a-card" style={{ marginBottom: "1rem" }}>
-            <div className="card-hd"><span style={{ color: "#f59e0b" }}>⚙</span><span className="card-hd-title">{t("playground.modelSettings")}</span></div>
+        <div className="playground-grid">
+          
+          <div className="chat-container">
+            <div className="messages">
+              {messages.map((msg, i) => (
+                <div key={i} className={`message ${msg.from}`}>
+                  {msg.from === "bot" && (
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="avatar">
+                      <defs>
+                        <linearGradient id={`bot-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" style={{stopColor: "#10b981"}} />
+                          <stop offset="100%" style={{stopColor: "#3b82f6"}} />
+                        </linearGradient>
+                      </defs>
+                      <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill={`url(#bot-${i})`}/>
+                      <circle cx="12" cy="14" r="2" fill="white"/>
+                      <circle cx="20" cy="14" r="2" fill="white"/>
+                      <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                      <circle cx="16" cy="7" r="1" fill="white"/>
+                      <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                  )}
+                  <div className="bubble">{msg.text}</div>
+                </div>
+              ))}
+              {typing && (
+                <div className="message bot">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="avatar">
+                    <defs>
+                      <linearGradient id="bot-typing" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: "#10b981"}} />
+                        <stop offset="100%" style={{stopColor: "#3b82f6"}} />
+                      </linearGradient>
+                    </defs>
+                    <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#bot-typing)"/>
+                    <circle cx="12" cy="14" r="2" fill="white"/>
+                    <circle cx="20" cy="14" r="2" fill="white"/>
+                    <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                    <circle cx="16" cy="7" r="1" fill="white"/>
+                    <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                  <div className="bubble typing-indicator">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
+              )}
+              <div ref={bottomRef} />
+            </div>
 
-            <div style={{ marginBottom: "1.1rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                <label className="a-label" style={{ margin: 0 }}>{t("playground.temperature")}</label>
-                <span style={{ fontSize: "0.72rem", color: "#f59e0b", fontWeight: 700 }}>{temp.toFixed(1)}</span>
-              </div>
-              <input type="range" min={0} max={1} step={0.1} value={temp} onChange={e => setTemp(Number(e.target.value))} className="a-slider" style={{ width: "100%" }} data-testid="slider-temperature" />
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.3rem", fontSize: "0.62rem", color: "#4a4035" }}>
-                <span>{t("playground.precise")}</span><span>{t("playground.balanced")}</span><span>{t("playground.creative")}</span>
+            <div className="input-area">
+              <textarea
+                className="input"
+                placeholder={t("playground.inputPlaceholder")}
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKey}
+                rows={2}
+              />
+              <button className="send-btn" onClick={send} disabled={!input.trim() || typing}>
+                ➤
+              </button>
+            </div>
+          </div>
+
+          <div className="sidebar">
+            <div className="card">
+              <h3 className="card-title">⚙️ Settings</h3>
+              <div className="settings-list">
+                {toggleSettings.map((setting, i) => (
+                  <div key={i} className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-label">{setting.label}</div>
+                      <div className="setting-desc">{setting.sub}</div>
+                    </div>
+                    <div className={`toggle ${setting.val ? "on" : ""}`} onClick={() => setting.set(!setting.val)} />
+                  </div>
+                ))}
+                
+                <div className="setting-item slider-setting">
+                  <div className="setting-info">
+                    <div className="setting-label">Temperature</div>
+                    <div className="setting-desc">Creativity level</div>
+                  </div>
+                  <div className="slider-value">{temp.toFixed(1)}</div>
+                </div>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.1}
+                  value={temp}
+                  onChange={e => setTemp(Number(e.target.value))}
+                  className="slider"
+                />
               </div>
             </div>
 
-            {toggleSettings.map((s, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.8rem", marginBottom: i === 0 ? "0.8rem" : 0 }}>
-                <div>
-                  <div style={{ fontSize: "0.8rem", fontWeight: 600, color: "#c8a96e" }}>{s.label}</div>
-                  <div style={{ fontSize: "0.67rem", color: "#6b6355" }}>{s.sub}</div>
+            <div className="card">
+              <h3 className="card-title">📊 Session Stats</h3>
+              <div className="stats-list">
+                <div className="stat-row">
+                  <span>Messages Sent</span>
+                  <span className="stat-value">{messages.filter(m => m.from === "user").length}</span>
                 </div>
-                <div className={`a-toggle ${s.val ? "on" : ""}`} onClick={() => s.set((v: boolean) => !v)} data-testid={s.testId} />
+                <div className="stat-row">
+                  <span>Bot Replies</span>
+                  <span className="stat-value">{Math.max(0, messages.filter(m => m.from === "bot").length - 1)}</span>
+                </div>
+                <div className="stat-row">
+                  <span>Avg Response</span>
+                  <span className="stat-value">~1.4s</span>
+                </div>
               </div>
-            ))}
-          </div>
-
-          <div className="a-card" style={{ marginBottom: "1rem" }}>
-            <div className="card-hd"><span style={{ color: "#34d399" }}>◈</span><span className="card-hd-title">{t("playground.agentInfo")}</span></div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
-              {agentInfo.map((row, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
-                  <span style={{ color: "#6b6355" }}>{row.label}</span>
-                  <span style={{ fontWeight: 700, color: row.color }}>{row.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="a-card">
-            <div className="card-hd"><span style={{ color: "#60a5fa" }}>◎</span><span className="card-hd-title">{t("playground.sessionStats")}</span></div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
-              {sessionStats.map((s, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
-                  <span style={{ color: "#6b6355" }}>{s.label}</span>
-                  <span style={{ fontWeight: 700, color: "#c8a96e" }}>{s.value}</span>
-                </div>
-              ))}
             </div>
           </div>
         </div>
@@ -189,51 +200,349 @@ export default function PlaygroundPage() {
 }
 
 const css = `
-  .aura-topbar{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;flex-shrink:0;background:#0a0805;border-bottom:1px solid rgba(245,158,11,.1);}
-  .aura-topbar-title{font-size:.85rem;font-weight:700;color:#c8a96e;}
-  .a-btn{display:inline-flex;align-items:center;gap:.45rem;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;border:none;transition:all .2s;white-space:nowrap;}
-  .a-btn-ghost{background:rgba(245,158,11,.07);color:#c8a96e;border:1px solid rgba(245,158,11,.12);border-radius:10px;padding:.45rem 1rem;font-size:.78rem;}
-  .a-btn-ghost:hover{background:rgba(245,158,11,.12);}
-  .a-card{background:#141109;border:1px solid rgba(245,158,11,.1);border-radius:14px;padding:1.3rem 1.4rem;}
-  .a-label{font-size:.72rem;font-weight:700;color:#6b6355;margin-bottom:.35rem;display:block;}
-  .a-toggle{width:38px;height:21px;border-radius:100px;background:#1a1610;border:1px solid rgba(245,158,11,.12);position:relative;cursor:pointer;transition:all .2s;flex-shrink:0;}
-  .a-toggle.on{background:rgba(245,158,11,.2);border-color:#f59e0b;}
-  .a-toggle::after{content:'';position:absolute;width:15px;height:15px;border-radius:50%;background:#6b6355;top:2px;left:2px;transition:all .2s;}
-  .a-toggle.on::after{background:#f59e0b;left:19px;}
-  .a-slider{appearance:none;height:4px;border-radius:100px;background:rgba(245,158,11,.15);outline:none;cursor:pointer;}
-  .a-slider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#f59e0b;cursor:pointer;box-shadow:0 0 8px rgba(245,158,11,.4);}
-  .card-hd{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;}
-  .card-hd-title{font-size:.88rem;font-weight:700;color:#c8a96e;}
-  .pg-layout{flex:1;display:grid;grid-template-columns:1fr 280px;overflow:hidden;}
-  .pg-chat-panel{display:flex;flex-direction:column;border-right:1px solid rgba(245,158,11,.08);overflow:hidden;}
-  .pg-chat-header{display:flex;align-items:center;gap:.75rem;padding:.9rem 1.4rem;border-bottom:1px solid rgba(245,158,11,.08);background:#0a0805;flex-shrink:0;}
-  .pg-agent-av{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:#0a0805;font-weight:900;flex-shrink:0;}
-  .pg-agent-name{font-size:.85rem;font-weight:700;color:#f5e6c8;display:flex;align-items:center;gap:.5rem;}
-  .pg-agent-badge{font-size:.58rem;font-weight:700;background:rgba(245,158,11,.1);color:#f59e0b;border:1px solid rgba(245,158,11,.2);padding:.15rem .5rem;border-radius:100px;letter-spacing:.05em;text-transform:uppercase;}
-  .pg-agent-sub{font-size:.68rem;color:#6b6355;margin-top:.1rem;}
-  .pg-online{margin-left:auto;display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:#34d399;font-weight:600;}
-  .pg-online-dot{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;animation:a-pulse 2s infinite;}
-  .pg-messages{flex:1;overflow-y:auto;padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:.75rem;background:#0f0d0a;}
-  .pg-messages::-webkit-scrollbar{width:4px;} .pg-messages::-webkit-scrollbar-thumb{background:rgba(245,158,11,.15);border-radius:4px;}
-  .pg-msg-wrap{display:flex;align-items:flex-start;gap:.55rem;}
-  .pg-msg-wrap.user{flex-direction:row-reverse;}
-  .pg-bot-av{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#0a0805;font-weight:900;flex-shrink:0;margin-top:2px;}
-  .pg-bubble{padding:.65rem .95rem;border-radius:12px;font-size:.8rem;line-height:1.55;font-family:'Syne',sans-serif;max-width:75%;animation:a-fadeUp .25s ease both;}
-  .pg-bubble.bot{background:#141109;border:1px solid rgba(245,158,11,.1);color:#c8a96e;border-radius:2px 12px 12px 12px;}
-  .pg-bubble.user{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.2);color:#f5e6c8;border-radius:12px 12px 2px 12px;}
-  .pg-typing{display:flex;align-items:center;gap:4px;padding:.75rem 1rem;}
-  .pg-typing span{width:6px;height:6px;border-radius:50%;background:#f59e0b;animation:a-pulse 1.2s infinite;}
-  .pg-typing span:nth-child(2){animation-delay:.2s;}
-  .pg-typing span:nth-child(3){animation-delay:.4s;}
-  .pg-input-row{display:flex;align-items:flex-end;gap:.6rem;padding:.9rem 1.2rem;border-top:1px solid rgba(245,158,11,.08);background:#0a0805;flex-shrink:0;}
-  .pg-input{flex:1;background:#141109;border:1px solid rgba(245,158,11,.1);border-radius:12px;color:#e8dece;font-family:'Syne',sans-serif;font-size:.82rem;padding:.65rem 1rem;outline:none;resize:none;line-height:1.5;transition:border-color .2s;}
-  .pg-input:focus{border-color:rgba(245,158,11,.25);}
-  .pg-input::placeholder{color:#4a4035;}
-  .pg-send{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;color:#0a0805;font-size:1rem;cursor:pointer;transition:all .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:900;}
-  .pg-send:hover{transform:scale(1.05);}
-  .pg-send:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-  .pg-settings-panel{overflow-y:auto;padding:1.2rem;display:flex;flex-direction:column;background:#0a0805;}
-  .pg-settings-panel::-webkit-scrollbar{width:0;}
-  @keyframes a-fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes a-pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .playground-page {
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    font-family: 'Inter', sans-serif;
+    height: calc(100vh - 4rem);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f3f4f6;
+    margin: 0 0 0.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
+    color: #9ca3af;
+    margin: 0;
+  }
+
+  .btn-clear {
+    background: #1f2937;
+    color: #f3f4f6;
+    border: 1px solid #374151;
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-clear:hover {
+    background: #374151;
+  }
+
+  .playground-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .playground-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .messages::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .messages::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 3px;
+  }
+
+  .message {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .message.user {
+    flex-direction: row-reverse;
+  }
+
+  .avatar {
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 6px rgba(16, 185, 129, 0.3));
+  }
+
+  .bubble {
+    padding: 0.875rem 1.125rem;
+    border-radius: 12px;
+    max-width: 70%;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .message.bot .bubble {
+    background: #1f2937;
+    border: 1px solid #374151;
+    color: #d1d5db;
+    border-radius: 4px 12px 12px 12px;
+  }
+
+  .message.user .bubble {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #f3f4f6;
+    border-radius: 12px 4px 12px 12px;
+  }
+
+  .typing-indicator {
+    display: flex;
+    gap: 0.375rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .typing-indicator span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: bounce 1.4s infinite;
+  }
+
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  .input-area {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border-top: 1px solid #1f2937;
+    background: #0f172a;
+  }
+
+  .input {
+    flex: 1;
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    color: #f3f4f6;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.125rem;
+    resize: none;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .input:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  }
+
+  .send-btn {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .send-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  }
+
+  .send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f3f4f6;
+    margin: 0 0 1.25rem;
+  }
+
+  .settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .setting-info {
+    flex: 1;
+  }
+
+  .setting-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #f3f4f6;
+    margin-bottom: 0.25rem;
+  }
+
+  .setting-desc {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+  }
+
+  .toggle {
+    width: 44px;
+    height: 24px;
+    border-radius: 100px;
+    background: #374151;
+    border: 1px solid #4b5563;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .toggle.on {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+  }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #9ca3af;
+    top: 2px;
+    left: 2px;
+    transition: all 0.2s;
+  }
+
+  .toggle.on::after {
+    background: #10b981;
+    left: 22px;
+  }
+
+  .slider-setting {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .slider-value {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #10b981;
+  }
+
+  .slider {
+    width: 100%;
+    appearance: none;
+    height: 6px;
+    border-radius: 100px;
+    background: #374151;
+    outline: none;
+    cursor: pointer;
+    margin-top: 0.75rem;
+  }
+
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #10b981;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  }
+
+  .stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #9ca3af;
+  }
+
+  .stat-value {
+    font-weight: 700;
+    color: #10b981;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+  }
 `;
