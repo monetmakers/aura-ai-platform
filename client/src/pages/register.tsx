@@ -102,7 +102,22 @@ export default function RegisterPage() {
       <div className="reg-bg">
         <div className="reg-card">
           <div className="reg-logo">
-            <div className="reg-logo-mark">✦</div>
+            <div className="reg-logo-mark">
+              <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="reg-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: "#10b981", stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: "#3b82f6", stopOpacity: 1}} />
+                  </linearGradient>
+                </defs>
+                <path d="M16 3L26 8.5V23.5L16 29L6 23.5V8.5L16 3Z" fill="url(#reg-logo-grad)"/>
+                <circle cx="12" cy="14" r="2" fill="white"/>
+                <circle cx="20" cy="14" r="2" fill="white"/>
+                <path d="M11 19Q16 22 21 19" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                <circle cx="16" cy="7" r="1" fill="white"/>
+                <line x1="16" y1="8" x2="16" y2="11" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
             <span className="reg-logo-text">Aura</span>
           </div>
 
@@ -188,7 +203,7 @@ export default function RegisterPage() {
                   disabled={registerMutation.isPending}
                   data-testid="button-create-workspace"
                 >
-                  {registerMutation.isPending ? "Creating…" : `✦ ${t("register.submit")}`}
+                  {registerMutation.isPending ? "Creating…" : t("register.submit")}
                 </button>
 
                 <div className="reg-signin">
@@ -223,93 +238,264 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 
 const css = `
   .reg-bg {
-    min-height: 100vh; width: 100%;
-    background: #0f0d0a;
-    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    background: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 2rem 1rem;
-    font-family: 'Syne', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
+
   .reg-card {
-    width: 100%; max-width: 560px;
-    background: #141109;
-    border: 1px solid rgba(245,158,11,0.14);
-    border-radius: 20px;
-    padding: 2.4rem 2.6rem;
+    width: 100%;
+    max-width: 600px;
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
     animation: regFadeUp 0.4s ease both;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
   }
-  .reg-logo { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 2rem; }
+
+  .reg-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+  }
+
   .reg-logo-mark {
-    width: 30px; height: 30px; border-radius: 8px;
-    background: linear-gradient(135deg,#f59e0b,#d97706);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; color: #0a0805; font-weight: 900;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .reg-logo-text { font-size: 1.15rem; font-weight: 800; color: #f5e6c8; letter-spacing: -0.02em; }
+
+  .reg-logo-mark svg {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));
+  }
+
+  .reg-logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #f3f4f6;
+    letter-spacing: -0.025em;
+  }
+
   .reg-title {
-    font-family: 'Literata', serif;
-    font-size: 1.6rem; font-weight: 500;
-    color: #f5e6c8; letter-spacing: -0.02em; margin: 0 0 0.35rem;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #f3f4f6;
+    letter-spacing: -0.025em;
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
   }
-  .reg-sub { font-size: 0.8rem; color: #6b6355; margin: 0 0 1.8rem; }
-  .reg-form { display: flex; flex-direction: column; gap: 1rem; }
-  .reg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  @media(max-width:500px) { .reg-row { grid-template-columns: 1fr; } }
-  .reg-field { display: flex; flex-direction: column; gap: 0.3rem; }
-  .reg-label { font-size: 0.7rem; font-weight: 700; color: #6b6355; letter-spacing: 0.03em; }
+
+  .reg-sub {
+    font-size: 1rem;
+    color: #9ca3af;
+    margin: 0 0 2.5rem;
+  }
+
+  .reg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .reg-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 540px) {
+    .reg-row {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .reg-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .reg-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #d1d5db;
+    letter-spacing: 0.01em;
+  }
+
   .reg-input {
-    background: #0f0d0a;
-    border: 1px solid rgba(245,158,11,0.12);
-    border-radius: 10px;
-    color: #e8dece;
-    font-family: 'Syne',sans-serif;
-    font-size: 0.82rem;
-    padding: 0.65rem 0.9rem;
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    color: #f3f4f6;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    padding: 0.875rem 1.125rem;
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
     width: 100%;
   }
-  .reg-input:focus { border-color: rgba(245,158,11,0.35); }
-  .reg-input::placeholder { color: #4a4035; }
-  .reg-select { cursor: pointer; appearance: none; }
-  .reg-select option { background: #141109; }
-  .reg-error { font-size: 0.65rem; color: #f87171; }
-  .reg-err-box {
-    background: rgba(248,113,113,0.08);
-    border: 1px solid rgba(248,113,113,0.2);
-    border-radius: 8px; padding: 0.55rem 0.85rem;
-    font-size: 0.77rem; color: #f87171;
+
+  .reg-input:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   }
+
+  .reg-input::placeholder {
+    color: #6b7280;
+  }
+
+  .reg-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%239ca3af"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.875rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+  }
+
+  .reg-select option {
+    background: #1f2937;
+    color: #f3f4f6;
+  }
+
+  .reg-error {
+    font-size: 0.8125rem;
+    color: #f87171;
+    margin-top: -0.25rem;
+  }
+
+  .reg-err-box {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 10px;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.9375rem;
+    color: #f87171;
+  }
+
   .reg-submit {
     margin-top: 0.5rem;
-    background: linear-gradient(135deg,#f59e0b,#d97706);
-    color: #0a0805; border: none; border-radius: 12px;
-    padding: 0.8rem; font-size: 0.85rem; font-weight: 800;
-    font-family: 'Syne',sans-serif; cursor: pointer;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 6px 24px rgba(245,158,11,0.25);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
   }
-  .reg-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(245,158,11,0.35); }
-  .reg-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-  .reg-signin { text-align: center; font-size: 0.75rem; color: #4a4035; margin-top: 0.25rem; }
+
+  .reg-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(16, 185, 129, 0.35);
+  }
+
+  .reg-submit:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .reg-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .reg-signin {
+    text-align: center;
+    font-size: 0.9375rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+  }
+
   .reg-signin-link {
-    background: none; border: none; color: #f59e0b;
-    font-family: 'Syne',sans-serif; font-size: 0.75rem; font-weight: 700;
-    cursor: pointer; padding: 0; text-decoration: underline;
+    background: none;
+    border: none;
+    color: #10b981;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    transition: color 0.2s;
   }
+
+  .reg-signin-link:hover {
+    color: #059669;
+    text-decoration: underline;
+  }
+
   .reg-success {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 2rem 0; text-align: center; gap: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 0;
+    text-align: center;
+    gap: 1rem;
   }
+
   .reg-success-icon {
-    width: 52px; height: 52px; border-radius: 50%;
-    background: rgba(52,211,153,0.12); border: 2px solid #34d399;
-    display: flex; align-items: center; justify-content: center;
-    color: #34d399; font-size: 1.4rem; font-weight: 700;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.1);
+    border: 3px solid #10b981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #10b981;
+    font-size: 2rem;
+    font-weight: 700;
+    animation: successPulse 0.6s ease both;
   }
-  .reg-success-title { font-size: 1.1rem; font-weight: 700; color: #f5e6c8; }
-  .reg-success-sub { font-size: 0.78rem; color: #6b6355; }
+
+  .reg-success-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f3f4f6;
+  }
+
+  .reg-success-sub {
+    font-size: 1rem;
+    color: #9ca3af;
+  }
+
   @keyframes regFadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes successPulse {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 `;
