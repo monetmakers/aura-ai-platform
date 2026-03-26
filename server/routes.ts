@@ -7,6 +7,7 @@ import { insertAgentSchema, updateAgentSchema } from "@shared/schema";
 import { z } from "zod";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { IntentDiscoveryService } from "./intentDiscovery";
+import OpenAI from "openai";
 
 // Dynamic import for pdf-parse to handle both ESM and CJS builds
 let pdfParse: any;
@@ -24,6 +25,16 @@ const upload = multer({
 });
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "");
+
+// OpenRouter client for additional models (GLM-5, etc.)
+const openrouter = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY || "",
+  defaultHeaders: {
+    "HTTP-Referer": "https://aura.ai",
+    "X-Title": "Aura AI Platform",
+  }
+});
 
 interface DiscoveredIntent {
   category: string;
@@ -606,7 +617,7 @@ export async function registerRoutes(
 
   app.post("/api/chat", async (req, res) => {
     try {
-      const { message, conversationId, agentId, language = "en" } = req.body;
+      const { message, conversationId, agentId, language = "en", model = "gemini" } = req.body;
 
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
@@ -678,12 +689,29 @@ ${documentContext ?
       let emotionalContext: EmotionalContext | null = null;
 
       try {
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-        const fullPrompt = `${systemPrompt}\n\nUser message: ${message}`;
-        
-        const result = await model.generateContent(fullPrompt);
-        const response = result.response;
-        const baseResponse = response.text() || "I apologize, but I couldn't generate a response.";
+        let baseResponse: string;
+
+        // Model selection: support Gemini, GLM-5, and other OpenRouter models
+        if (model === "glm5" || model === "glm-5") {
+          // Use GLM-5 via OpenRouter
+          const completion = await openrouter.chat.completions.create({
+            model: "zhipu-ai/glm-5",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: message }
+            ],
+            temperature: 0.7,
+          });
+          baseResponse = completion.choices[0]?.message?.content || "I apologize, but I couldn't generate a response.";
+        } else {
+          // Default to Gemini
+          const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+          const fullPrompt = `${systemPrompt}\n\nUser message: ${message}`;
+          
+          const result = await geminiModel.generateContent(fullPrompt);
+          const response = result.response;
+          baseResponse = response.text() || "I apologize, but I couldn't generate a response.";
+        }
         
         const emotionalResult = EmotionalIntelligence.adjustResponseTone(
           baseResponse, 
@@ -697,7 +725,7 @@ ${documentContext ?
           Math.floor(70 + Math.random() * 25) : 
           Math.floor(40 + Math.random() * 30);
       } catch (aiError: any) {
-        console.error("Gemini API error:", aiError.message);
+        console.error("AI API error:", aiError.message);
         if (aiError.message?.includes("429") || aiError.message?.includes("quota")) {
           aiResponse = "I'm currently experiencing high demand. Please try again in a moment, or contact support if this persists.";
         } else {
