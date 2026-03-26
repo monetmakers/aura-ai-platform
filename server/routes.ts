@@ -617,7 +617,7 @@ export async function registerRoutes(
 
   app.post("/api/chat", async (req, res) => {
     try {
-      const { message, conversationId, agentId, language = "en", model = "gemini" } = req.body;
+      const { message, conversationId, agentId, language = "en", model = "glm5" } = req.body;
 
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
@@ -690,10 +690,11 @@ ${documentContext ?
 
       try {
         let baseResponse: string;
-
-        // Model selection: support Gemini, GLM-5, and other OpenRouter models
-        if (model === "glm5" || model === "glm-5") {
-          // Use GLM-5 via OpenRouter
+        let modelUsed = model; // Track which model was actually used
+        
+        // Try GLM-5 first (now default), then fall back to Gemini
+        try {
+          // Use GLM-5 via OpenRouter (primary model)
           const completion = await openrouter.chat.completions.create({
             model: "zhipu-ai/glm-5",
             messages: [
@@ -702,15 +703,25 @@ ${documentContext ?
             ],
             temperature: 0.7,
           });
-          baseResponse = completion.choices[0]?.message?.content || "I apologize, but I couldn't generate a response.";
-        } else {
-          // Default to Gemini
+          baseResponse = completion.choices[0]?.message?.content || "";
+          
+          if (!baseResponse || baseResponse.trim() === "") {
+            throw new Error("Empty response from GLM-5");
+          }
+          
+          modelUsed = "glm5";
+        } catch (glm5Error) {
+          console.warn("GLM-5 failed, falling back to Gemini:", glm5Error.message);
+          
+          // Fallback to Gemini
           const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
           const fullPrompt = `${systemPrompt}\n\nUser message: ${message}`;
           
           const result = await geminiModel.generateContent(fullPrompt);
           const response = result.response;
           baseResponse = response.text() || "I apologize, but I couldn't generate a response.";
+          
+          modelUsed = "gemini";
         }
         
         const emotionalResult = EmotionalIntelligence.adjustResponseTone(
